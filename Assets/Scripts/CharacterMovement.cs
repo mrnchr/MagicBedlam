@@ -52,7 +52,8 @@ public class CharacterMovement : MonoBehaviour
         if (!_isJump && Input.GetKey(KeyCode.Space))
         {
             _isJump = true;
-            _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+
+            _rb.velocity = Vector3.Scale(_rb.velocity, new Vector3(1, 0, 1)); // velocity.y = 0; otherwise force up will be depressed force down
             _rb.AddForce(Vector3.up * _forceJump, ForceMode.Impulse);
         }
     }
