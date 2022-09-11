@@ -1,0 +1,60 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterMovement : MonoBehaviour
+{
+    [Header("Movement")]
+    [SerializeField] private float _stepSpeed;
+    [SerializeField] [Tooltip("Multiplier step speed")] private float _runFactor;
+    [SerializeField] private float _forceJump;
+
+    [Header("Mouse Controller")]
+    [SerializeField] private Vector2 _mouseSensitivity;
+    [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
+    [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
+
+    private float _rotationX;
+    private Rigidbody _rb;
+    private GameObject _camera;
+    private bool _isJump;
+
+    void Start()
+    {
+        _rotationX = 0f;
+        _rb = GetComponent<Rigidbody>();  
+        _camera = GameObject.FindGameObjectWithTag("MainCamera");
+        _isJump = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        _isJump = false;
+    }
+
+    void FixedUpdate()
+    {
+
+        //Mouse Controller
+        _rotationX -= Input.GetAxis("Mouse Y") * _mouseSensitivity.y;
+        _rotationX = Mathf.Clamp(_rotationX, _minViewY, _maxViewY);
+
+        transform.Rotate(0, Input.GetAxis("Mouse X") * _mouseSensitivity.x, 0);
+        _camera.transform.localEulerAngles = new Vector3(_rotationX, 0, 0);
+
+        // Movement
+        float velY = _rb.velocity.y;
+
+        _rb.velocity = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) 
+            * (_stepSpeed * (Input.GetKey(KeyCode.LeftShift) ? _runFactor : 1));
+
+        _rb.velocity += new Vector3(0, velY, 0);
+
+        if (!_isJump && Input.GetKey(KeyCode.Space))
+        {
+            _isJump = true;
+            _rb.velocity = new Vector3(_rb.velocity.x, 0, _rb.velocity.z);
+            _rb.AddForce(Vector3.up * _forceJump, ForceMode.Impulse);
+        }
+    }
+}
