@@ -5,8 +5,7 @@ using UnityEngine;
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float _stepSpeed;
-    [SerializeField] [Tooltip("Multiplier step speed")] private float _runFactor;
+    [SerializeField] private float _speed;
     [SerializeField] private float _forceJump;
 
     [Header("Mouse Controller")]
@@ -46,7 +45,7 @@ public class CharacterMovement : MonoBehaviour
         float velY = _rb.velocity.y;
 
         _rb.velocity = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) 
-            * (_stepSpeed * (Input.GetKey(KeyCode.LeftShift) ? _runFactor : 1));
+            * _speed;
 
         _rb.velocity += new Vector3(0, velY, 0);
 
