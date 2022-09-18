@@ -7,7 +7,7 @@ public class CharacterMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float _speed;
     [SerializeField] private float _forceJump;
-
+    
     [Header("Mouse Controller")]
     [SerializeField] private Vector2 _mouseSensitivity;
     [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
