@@ -4,25 +4,23 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class MovedObject : MonoBehaviour
 {
+    private Material _material;
     
-    void Start()
+    private void Start()
     {
         tag = "MovedObject";
-    }
+        _material = GetComponent<MeshRenderer>().material;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void Glow(bool highlighted)
     {
         if(highlighted)
-            this.GetComponent<MeshRenderer>().material.EnableKeyword("_EMISSION");
+            _material.EnableKeyword("_EMISSION");
         else 
-            this.GetComponent<MeshRenderer>().material.DisableKeyword("_EMISSION");
+            _material.DisableKeyword("_EMISSION");
     }
 }
