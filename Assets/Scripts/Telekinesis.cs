@@ -10,6 +10,7 @@ public class Telekinesis : MonoBehaviour
     [SerializeField] private Vector3 _tookObjectPosition;
     [SerializeField] private float _errorRate;
     [SerializeField] private GameObject _camera;
+    [SerializeField] private float _viewDistance;
 
     private MovedObject _movedObject;
     private Transform _defaultParent;
@@ -101,7 +102,14 @@ public class Telekinesis : MonoBehaviour
 
         MagicTransition();
 
-        _objectRigidbody.AddForce(transform.forward * _trowingPower, ForceMode.Impulse);
+        // direction of throw
+        RaycastHit hit;
+        Vector3 aimPos;
+
+        aimPos = Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit) ? hit.point 
+            : _camera.transform.position +_camera.transform.forward * _viewDistance;
+
+        _objectRigidbody.AddForce((aimPos - _movedObject.transform.position).normalized * _trowingPower, ForceMode.Impulse);
 
         _defaultParent = null;
         _objectRigidbody = null;

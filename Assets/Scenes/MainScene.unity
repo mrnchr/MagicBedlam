@@ -4191,7 +4191,7 @@ GameObject:
   - component: {fileID: 1252710111}
   - component: {fileID: 1252710113}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4339,6 +4339,7 @@ MonoBehaviour:
   _tookObjectPosition: {x: 0.7, y: -0.2, z: 1.5}
   _errorRate: 0.01
   _camera: {fileID: 963194225}
+  _viewDistance: 10
 --- !u!1001 &1253753804
 PrefabInstance:
   m_ObjectHideFlags: 0
