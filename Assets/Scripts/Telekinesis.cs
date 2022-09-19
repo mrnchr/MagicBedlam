@@ -35,12 +35,10 @@ public class Telekinesis : MonoBehaviour
                 if (hit.transform.tag == "MovedObject" && Vector3.Distance(hit.transform.position, transform.position) <= _limitTelekinesis)
                 {
                     if (!_movedObject || _movedObject.transform != hit.transform)
-                    {
                         Flame(false);
 
-                        _movedObject = hit.transform.GetComponent<MovedObject>();
-                        Flame(true);
-                    }
+                    _movedObject = hit.transform.GetComponent<MovedObject>();
+                    Flame(true);
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {
