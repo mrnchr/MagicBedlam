@@ -11,25 +11,28 @@ public class Telekinesis : MonoBehaviour
     [SerializeField] private float _errorRate;
     [SerializeField] private GameObject _camera;
     [SerializeField] private float _viewDistance;
+    [SerializeField] private float _coolDownTime;
 
     private MovedObject _movedObject;
     private Transform _defaultParent;
     private Rigidbody _objectRigidbody;
     private bool _isTook;
     private bool _toPlayer;
+    private bool _isCoolDown;
 
     private void Start()
     {
         _movedObject = null;
         _isTook = false;
         _toPlayer = false;
+        _isCoolDown = false;
     }
 
     private void Update()
     {
         RaycastHit hit;
 
-        if (!_isTook)
+        if (!_isTook & !_isCoolDown)
         {
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit))
             {
@@ -111,6 +114,10 @@ public class Telekinesis : MonoBehaviour
 
         _objectRigidbody.AddForce((aimPos - _movedObject.transform.position).normalized * _trowingPower, ForceMode.Impulse);
 
+        // recharge enabling
+        _isCoolDown = true;
+        StartCoroutine(CoolDown());
+
         _defaultParent = null;
         _objectRigidbody = null;
     }
@@ -127,5 +134,11 @@ public class Telekinesis : MonoBehaviour
         }
 
         _toPlayer = false;
+    }
+
+    private IEnumerator CoolDown ()
+    {
+        yield return new WaitForSeconds(_coolDownTime);
+        _isCoolDown = false;
     }
 }

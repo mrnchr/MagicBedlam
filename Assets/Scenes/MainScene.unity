@@ -4340,6 +4340,7 @@ MonoBehaviour:
   _errorRate: 0.01
   _camera: {fileID: 963194225}
   _viewDistance: 10
+  _coolDownTime: 5
 --- !u!1001 &1253753804
 PrefabInstance:
   m_ObjectHideFlags: 0
