@@ -1,60 +1,58 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Movement")]
+    [SerializeField] private LayerMask _floorMask;
+    [SerializeField] private Transform _feet;
+    [SerializeField] private Rigidbody _rb;
     [SerializeField] private float _speed;
     [SerializeField] private float _forceJump;
     
     [Header("Mouse Controller")]
+    [SerializeField] private Transform _camera;
     [SerializeField] private Vector2 _mouseSensitivity;
     [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
     [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
 
-    private float _rotationX;
-    private Rigidbody _rb;
-    private GameObject _camera;
-    private bool _isJump;
+    private Vector3 CharacterMovementInput;
+    private Vector2 CharacterMouseInput;
+    private float xRot;
 
     void Start()
     {
-        _rotationX = 0f;
-        _rb = GetComponent<Rigidbody>();  
-        _camera = GameObject.FindGameObjectWithTag("MainCamera");
-        _isJump = false;
-    }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        _isJump = false;
     }
 
     void FixedUpdate()
     {
+        CharacterMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        CharacterMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-        //Mouse Controller
-        _rotationX -= Input.GetAxis("Mouse Y") * _mouseSensitivity.y;
-        _rotationX = Mathf.Clamp(_rotationX, _minViewY, _maxViewY);
+        MoveCharacter();
+        MoveCamera();        
+    }
 
-        transform.Rotate(0, Input.GetAxis("Mouse X") * _mouseSensitivity.x, 0);
-        _camera.transform.localEulerAngles = new Vector3(_rotationX, 0, 0);
+    private void MoveCharacter()
+    {
+        Vector3 moveVector = transform.TransformDirection(CharacterMovementInput) * _speed;
+        _rb.velocity = new Vector3(moveVector.x, _rb.velocity.y, moveVector.z);
 
-        // Movement
-        float velY = _rb.velocity.y;
-
-        _rb.velocity = (transform.forward * Input.GetAxis("Vertical") + transform.right * Input.GetAxis("Horizontal")) 
-            * _speed;
-
-        _rb.velocity += new Vector3(0, velY, 0);
-
-        if (!_isJump && Input.GetKey(KeyCode.Space))
+        if (Physics.CheckSphere(_feet.position, 0.1f, _floorMask) && Input.GetKey(KeyCode.Space))
         {
-            _isJump = true;
-
-            _rb.velocity = Vector3.Scale(_rb.velocity, new Vector3(1, 0, 1)); // velocity.y = 0; otherwise force up will be depressed force down
             _rb.AddForce(Vector3.up * _forceJump, ForceMode.Impulse);
         }
+    }
+
+    private void MoveCamera()
+    {
+        xRot -= CharacterMouseInput.y * _mouseSensitivity.x;
+        xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);
+
+        transform.Rotate(0, CharacterMouseInput.x * _mouseSensitivity.x, 0); 
+        _camera.localRotation = Quaternion.Euler(xRot, 0, 0);
     }
 }
