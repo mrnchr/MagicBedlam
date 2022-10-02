@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using Mirror;
 
-public class CharacterMovement : MonoBehaviour
+public class CharacterMovement : NetworkBehaviour
 {
     [Header("Movement")]
     [SerializeField] private LayerMask _floorMask;
@@ -30,15 +30,21 @@ public class CharacterMovement : MonoBehaviour
     private Vector2 CharacterMouseInput;
     private float xRot;
 
-    void Start()
+    public override void OnStartLocalPlayer() {
+
+    } 
+
+    private void Start()
     {
         Vector3 checkerPos = _lowerStepChecker.position;
         checkerPos.y += _stepHeight;
         _upperStepCheker.position = checkerPos;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
+        if(!isLocalPlayer) return;
+
         CharacterMovementInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         CharacterMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
