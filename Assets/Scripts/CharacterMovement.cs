@@ -18,13 +18,23 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
     [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
 
+    [Header("Upstairs")]
+    [SerializeField] private Transform _lowerStepChecker;
+    [SerializeField] private Transform _upperStepCheker;
+    [SerializeField] private float _stepHeight;
+    [SerializeField] private float _stepSmooth;
+    [SerializeField] private float _stepDistance;
+    [SerializeField] private float _footLength;
+
     private Vector3 CharacterMovementInput;
     private Vector2 CharacterMouseInput;
     private float xRot;
 
     void Start()
     {
-
+        Vector3 checkerPos = _lowerStepChecker.position;
+        checkerPos.y += _stepHeight;
+        _upperStepCheker.position = checkerPos;
     }
 
     void FixedUpdate()
@@ -33,7 +43,8 @@ public class CharacterMovement : MonoBehaviour
         CharacterMouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
         MoveCharacter();
-        MoveCamera();        
+        MoveCamera();
+        StepChecker();
     }
 
     private void MoveCharacter()
@@ -54,5 +65,16 @@ public class CharacterMovement : MonoBehaviour
 
         transform.Rotate(0, CharacterMouseInput.x * _mouseSensitivity.x, 0); 
         _camera.localRotation = Quaternion.Euler(xRot, 0, 0);
+    }
+
+    private void StepChecker()
+    {
+        if (Physics.Raycast(_lowerStepChecker.position, _rb.velocity.normalized, _stepDistance * Mathf.Sqrt(2)))
+        {
+            if(!Physics.Raycast(_upperStepCheker.position, _rb.velocity.normalized, (_stepDistance + _footLength) * Mathf.Sqrt(2)))
+            {
+                _rb.position += new Vector3(0, _stepSmooth, 0);
+            }
+        }
     }
 }
