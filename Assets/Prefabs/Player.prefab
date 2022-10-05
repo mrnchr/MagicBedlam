@@ -123,8 +123,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   _rb: {fileID: 6227661062165543711}
-  _camera: {fileID: 0}
-  _speed: 3
+  _speed: 15
+  _mouseSensitivity: {x: 3, y: 3}
+  _minViewY: -90
+  _maxViewY: 45
 --- !u!65 &6227661062165543713
 BoxCollider:
   m_ObjectHideFlags: 0

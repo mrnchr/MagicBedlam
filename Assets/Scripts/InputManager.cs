@@ -18,8 +18,9 @@ public class InputManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField] private Vector3 _inputMovement;
-    [SerializeField] private Player _pl;
+    private Vector3 _inputMovement;
+    private Vector2 _inputMouse;
+    private Player _pl;
 
     public void SetPlayer(Player pl) => _pl = pl;
 
@@ -27,12 +28,13 @@ public class InputManager : MonoBehaviour
         MoveInput();
 
         if(_pl) {
-            _pl.CmdMove(_inputMovement);
             _pl.Move(_inputMovement);
+            _pl.Rotate(_inputMouse);
         }
     }
 
     private void MoveInput() {
         _inputMovement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        _inputMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 }

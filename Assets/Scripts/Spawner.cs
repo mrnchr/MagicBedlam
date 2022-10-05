@@ -60,9 +60,6 @@ public class Spawner : NetworkManager
         );
 
         GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
-        Color colorPlayer = _players.Dequeue();
-
-        player.GetComponent<MeshRenderer>().material.color = colorPlayer;
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
@@ -71,12 +68,15 @@ public class Spawner : NetworkManager
     public override void OnClientDisconnect()
     {
         Debug.Log("Spawner:OnClientDisconnect()");
-        NetworkClient.localPlayer.GetComponent<Player>().CmdGiveColor();
         base.OnClientDisconnect();
     }
 
     public void GetColor(Color colorForGet) {
         _players.Enqueue(colorForGet);
+    }
+
+    public Color GiveColor() {
+        return _players.Dequeue();
     }
 
     private new void Start() {
