@@ -13,7 +13,6 @@ public class CharacterMovement : NetworkBehaviour
     [SerializeField] private float _forceJump;
     
     [Header("Mouse Controller")]
-    [SerializeField] private Transform _camera;
     [SerializeField] private Vector2 _mouseSensitivity;
     [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
     [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
@@ -25,20 +24,20 @@ public class CharacterMovement : NetworkBehaviour
     [SerializeField] private float _stepSmooth;
     [SerializeField] private float _stepDistance;
     [SerializeField] private float _footLength;
+    
 
+    private Transform _camera;
     private Vector3 CharacterMovementInput;
     private Vector2 CharacterMouseInput;
     private float xRot;
-
-    public override void OnStartLocalPlayer() {
-
-    } 
 
     private void Start()
     {
         Vector3 checkerPos = _lowerStepChecker.position;
         checkerPos.y += _stepHeight;
         _upperStepCheker.position = checkerPos;
+
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
     }
 
     private void FixedUpdate()

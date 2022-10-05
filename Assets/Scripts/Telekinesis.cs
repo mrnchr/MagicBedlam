@@ -9,10 +9,10 @@ public class Telekinesis : MonoBehaviour
     [SerializeField] private float _trowingPower;
     [SerializeField] private Vector3 _tookObjectPosition;
     [SerializeField] private float _errorRate;
-    [SerializeField] private GameObject _camera;
     [SerializeField] private float _viewDistance;
     [SerializeField] private float _coolDownTime;
 
+    private Transform _camera;
     private MovedObject _movedObject;
     private Transform _defaultParent;
     private Rigidbody _objectRigidbody;
@@ -26,6 +26,7 @@ public class Telekinesis : MonoBehaviour
         _isTook = false;
         _toPlayer = false;
         _isCoolDown = false;
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
     }
 
     private void Update()
@@ -34,7 +35,7 @@ public class Telekinesis : MonoBehaviour
 
         if (!_isTook & !_isCoolDown)
         {
-            if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit))
+            if (Physics.Raycast(_camera.position, _camera.forward, out hit))
             {
                 if (hit.transform.tag == "MovedObject" && Vector3.Distance(hit.transform.position, transform.position) <= _limitTelekinesis)
                 {
@@ -84,7 +85,7 @@ public class Telekinesis : MonoBehaviour
 
         Flame(false);
         _defaultParent = _movedObject.transform.parent;
-        _movedObject.transform.SetParent(_camera.transform);
+        _movedObject.transform.SetParent(_camera);
         _objectRigidbody = hit.rigidbody;
 
         MagicTransition();
@@ -109,8 +110,8 @@ public class Telekinesis : MonoBehaviour
         RaycastHit hit;
         Vector3 aimPos;
 
-        aimPos = Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit) ? hit.point 
-            : _camera.transform.position +_camera.transform.forward * _viewDistance;
+        aimPos = Physics.Raycast(_camera.position, _camera.forward, out hit) ? hit.point 
+            : _camera.position +_camera.forward * _viewDistance;
 
         _objectRigidbody.AddForce((aimPos - _movedObject.transform.position).normalized * _trowingPower, ForceMode.Impulse);
 
