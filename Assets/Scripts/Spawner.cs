@@ -5,20 +5,39 @@ using Mirror;
 
 public class Spawner : NetworkManager
 {
+    #region Singleton
+    static private Spawner _instance;
+
+    static public Spawner Instance {
+        get {
+            return _instance;
+        }
+    }
+
+    private new void Awake() {
+        _instance = this;
+        Debug.Log("Spawner:Awake()");
+    }
+
+    #endregion
+
+    public Transform Camera {
+        get {
+            return _camera;
+        }
+    }
+
+    [SerializeField] private Transform _spawnZone;
     [SerializeField] private Color[] _playerColors;
     [SerializeField] private Transform _camera;
 
-    [HideInInspector] [SerializeField] Queue<Color> _players;
-    public Vector2 _spawnZoneX { private set; get; } 
-    public Vector2 _spawnZoneZ { private set; get; }    
-    public Transform _spawnZone { private set; get; }
+    private Queue<Color> _players;
+    private Vector2 _spawnZoneX;
+    private Vector2 _spawnZoneZ;   
 
     public override void OnStartServer()
     {
-        base.OnStartServer();
         _players = new Queue<Color>(_playerColors);
-
-        _spawnZone = GameObject.FindGameObjectWithTag("Respawn").transform;
 
         _spawnZoneX = new Vector2(_spawnZone.position.x - _spawnZone.localScale.x / 2, _spawnZone.position.x + _spawnZone.localScale.x / 2);
         _spawnZoneZ = new Vector2(_spawnZone.position.z - _spawnZone.localScale.z / 2, _spawnZone.position.z + _spawnZone.localScale.z / 2);
@@ -26,32 +45,41 @@ public class Spawner : NetworkManager
 
     public override void OnClientConnect()
     {
+        Debug.Log("Spawner:OnClientConnect()");
         base.OnClientConnect();
         NetworkClient.AddPlayer();
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        base.OnServerAddPlayer(conn);
-
-        Vector3 endPos = new Vector3 (
+        Debug.Log("Spawner:OnServerAddPlayer()");
+        Vector3 startPos = new Vector3 (
         Random.Range(_spawnZoneX.x, _spawnZoneX.y),
         _spawnZone.position.y,
         Random.Range(_spawnZoneZ.x, _spawnZoneZ.y)
         );
 
-        conn.identity.transform.position = endPos;
+        GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
+        Color colorPlayer = _players.Dequeue();
+
+        player.GetComponent<MeshRenderer>().material.color = colorPlayer;
+
+        player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
+        NetworkServer.AddPlayerForConnection(conn, player);
     }
 
     public override void OnClientDisconnect()
     {
-        //CmdReturnColor(NetworkClient.localPlayer.GetComponent<MeshRenderer>().material.color);
+        Debug.Log("Spawner:OnClientDisconnect()");
+        NetworkClient.localPlayer.GetComponent<Player>().CmdGiveColor();
         base.OnClientDisconnect();
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        
+    public void GetColor(Color colorForGet) {
+        _players.Enqueue(colorForGet);
+    }
+
+    private new void Start() {
+        Debug.Log("Spawner:Start()");
     }
 }

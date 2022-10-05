@@ -12,9 +12,7 @@ GameObject:
   - component: {fileID: 6227661062165543712}
   - component: {fileID: 6227661062165543719}
   - component: {fileID: 6227661062165543711}
-  - component: {fileID: 6227661062165543707}
-  - component: {fileID: 6227661062165543717}
-  - component: {fileID: 8774965210654971915}
+  - component: {fileID: -4600839087924604186}
   - component: {fileID: 6227661062165543713}
   - component: {fileID: 458131475256736423}
   - component: {fileID: 6055423121327570473}
@@ -110,7 +108,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &6227661062165543707
+--- !u!114 &-4600839087924604186
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,59 +117,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6227661062165543709}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5fd6098c3b35d6439fd744a2a5f0a7b, type: 3}
+  m_Script: {fileID: 11500000, guid: d1ed99871e4e8be46ab8b4e7fc0ff7ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _floorMask:
-    serializedVersion: 2
-    m_Bits: 9
-  _feet: {fileID: 6227661063903063638}
   _rb: {fileID: 6227661062165543711}
-  _speed: 7.5
-  _forceJump: 2.5
-  _mouseSensitivity: {x: 1, y: 1}
-  _minViewY: -90
-  _maxViewY: 75
-  _lowerStepChecker: {fileID: 6227661062873789794}
-  _upperStepCheker: {fileID: 6227661063554172517}
-  _stepHeight: 0.2
-  _stepSmooth: 0.05
-  _stepDistance: 0.1
-  _footLength: 0.1
---- !u!114 &6227661062165543717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6227661062165543709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc19e2ead0a0c984b83d07a7d24529cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _limitTelekinesis: 5
-  _trowingPower: 30
-  _tookObjectPosition: {x: 0.7, y: -0.2, z: 1.5}
-  _errorRate: 0.01
-  _viewDistance: 10
-  _coolDownTime: 5
---- !u!114 &8774965210654971915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6227661062165543709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04c666db2100e5d4aa9fa6382efc52fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
+  _camera: {fileID: 0}
+  _speed: 3
 --- !u!65 &6227661062165543713
 BoxCollider:
   m_ObjectHideFlags: 0
