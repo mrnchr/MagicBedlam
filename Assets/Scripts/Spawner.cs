@@ -6,9 +6,9 @@ using Mirror;
 public class Spawner : NetworkManager
 {
     #region Singleton
-    static private Spawner _instance;
+    private static Spawner _instance;
 
-    static public Spawner Instance {
+    public static Spawner Instance {
         get {
             return _instance;
         }
@@ -16,6 +16,7 @@ public class Spawner : NetworkManager
 
     private new void Awake() {
         _instance = this;
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
         Debug.Log("Spawner:Awake()");
     }
 
@@ -27,9 +28,9 @@ public class Spawner : NetworkManager
         }
     }
 
-    [SerializeField] private Transform _spawnZone;
+    private Transform _spawnZone;
     [SerializeField] private Color[] _playerColors;
-    [SerializeField] private Transform _camera;
+    private Transform _camera;
 
     private Queue<Color> _players;
     private Vector2 _spawnZoneX;
@@ -37,7 +38,10 @@ public class Spawner : NetworkManager
 
     public override void OnStartServer()
     {
+        Debug.Log("Spawner:OnStartServer()");
         _players = new Queue<Color>(_playerColors);
+        _spawnZone = GameObject.FindGameObjectWithTag("Spawner").transform;
+
 
         _spawnZoneX = new Vector2(_spawnZone.position.x - _spawnZone.localScale.x / 2, _spawnZone.position.x + _spawnZone.localScale.x / 2);
         _spawnZoneZ = new Vector2(_spawnZone.position.z - _spawnZone.localScale.z / 2, _spawnZone.position.z + _spawnZone.localScale.z / 2);
@@ -67,16 +71,19 @@ public class Spawner : NetworkManager
 
     public override void OnClientDisconnect()
     {
-        Debug.Log("Spawner:OnClientDisconnect()");
         base.OnClientDisconnect();
+        Debug.Log("Spawner:OnClientDisconnect()");
     }
 
-    public void GetColor(Color colorForGet) {
+    public void AddColor(Color colorForGet) {
+        Debug.Log("Spawner:AddColor()");
         _players.Enqueue(colorForGet);
     }
 
-    public Color GiveColor() {
-        return _players.Dequeue();
+    public Color RemoveColor() {
+        Debug.Log("Spawner:RemoveColor()");
+        Color newColor = _players.Dequeue();
+        return newColor;
     }
 
     private new void Start() {

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5560002188798860792
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4614362301745946685}
+  m_Layer: 0
+  m_Name: FakeCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4614362301745946685
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5560002188798860792}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6227661062165543706}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6227661062165543709
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,6 +44,7 @@ GameObject:
   - component: {fileID: 6227661062165543719}
   - component: {fileID: 6227661062165543711}
   - component: {fileID: -4600839087924604186}
+  - component: {fileID: 5938583121857961636}
   - component: {fileID: 6227661062165543713}
   - component: {fileID: 458131475256736423}
   - component: {fileID: 6055423121327570473}
@@ -39,6 +71,7 @@ Transform:
   - {fileID: 6227661063903063638}
   - {fileID: 6227661062873789794}
   - {fileID: 6227661063554172517}
+  - {fileID: 4614362301745946685}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -122,11 +155,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  _fakeCamera: {fileID: 4614362301745946685}
   _rb: {fileID: 6227661062165543711}
-  _speed: 15
-  _mouseSensitivity: {x: 3, y: 3}
+  _jumpChecker: {fileID: 6227661063903063638}
+  _floorMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _speed: 10
+  _jumpForce: 1.2
+  _mouseSensitivity: {x: 1, y: 1}
   _minViewY: -90
   _maxViewY: 45
+--- !u!114 &5938583121857961636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6227661062165543709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05755dd0f07a75b4bbf8e7740480c0f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  _limitTelekinesis: 5
+  _throwingPower: 30
+  _tookObjectPosition: {x: 0.7, y: -0.2, z: 1.5}
+  _errorRate: 0.01
+  _viewDistance: 10
+  _coolDownTime: 5
+  _movableMask:
+    serializedVersion: 2
+    m_Bits: 64
+  _player: {fileID: -4600839087924604186}
 --- !u!65 &6227661062165543713
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -170,8 +233,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
+  syncInterval: 0.01
+  clientAuthority: 0
   sendRate: 30
   bufferTimeMultiplier: 2
   bufferSizeLimit: 64
@@ -209,7 +272,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   target: {fileID: 6227661062165543711}
-  clientAuthority: 1
+  clientAuthority: 0
   syncVelocity: 1
   clearVelocity: 0
   velocitySensitivity: 0.1
@@ -288,7 +351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6227661063903063638}
   m_Layer: 0
-  m_Name: JumpTrigger
+  m_Name: JumpChecker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

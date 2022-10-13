@@ -3,24 +3,37 @@ using Mirror;
 
 public class Player : NetworkBehaviour 
 {
+    [SerializeField] private Transform _fakeCamera;
+
+    public Transform FakeCamera {
+        get {
+            return _fakeCamera;
+        }
+    }
+
     [Header("Movement")]
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private Transform _jumpChecker;
+    [SyncVar] [SerializeField] private LayerMask _floorMask;
     [SyncVar] [SerializeField] private float _speed;
+    [SyncVar] [SerializeField] private float _jumpForce;
 
     [Header("Mouse Controller")]
     [SyncVar] [SerializeField] private Vector2 _mouseSensitivity;
     [SyncVar] [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
     [SyncVar] [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
 
-    private Transform _camera;
-
-    [SyncVar] float xRot;
-    [SyncVar] private Color _colorPlayer;
+    private float xRot;
+    [SyncVar(hook = nameof(WhenChangeColor))] private Color _colorPlayer;
 
     public override void OnStartServer()
     {
         Debug.Log("Player:OnStartServer()");
-        _colorPlayer = Spawner.Instance.GiveColor();
+        _colorPlayer = Spawner.Instance.RemoveColor();
+    }
+
+    private void WhenChangeColor(Color oldValue, Color newValue) {
+        GetComponent<MeshRenderer>().material.color = _colorPlayer;
     }
 
     public override void OnStartClient()
@@ -35,10 +48,13 @@ public class Player : NetworkBehaviour
         if(isClientOnly)
             gameObject.name = $"(Self) {gameObject.name}";
 
-        _camera = Spawner.Instance.Camera;
-        _camera.SetParent(transform);
-        _camera.localPosition = new Vector3(0, 0.7f, 0);
-        _camera.localRotation = Quaternion.Euler(Vector3.zero);
+        Spawner.Instance.Camera.SetParent(transform);
+        Spawner.Instance.Camera.localPosition = _fakeCamera.localPosition;
+        Spawner.Instance.Camera.localRotation = Quaternion.Euler(Vector3.zero);
+
+        Destroy(_fakeCamera.gameObject);
+        _fakeCamera = Spawner.Instance.Camera;
+        Debug.Log(FakeCamera);
 
         InputManager.Instance.SetPlayer(this);
     }
@@ -46,59 +62,77 @@ public class Player : NetworkBehaviour
     public override void OnStopClient()
     {
         Debug.Log("Player:OnStopClient()");
-        Spawner.Instance.Camera.SetParent(null);
     }
 
     public override void OnStopLocalPlayer()
     {
         Debug.Log("Player:OnStopLocalPlayer()");
+        if(isClientOnly)
+            CmdAddColor(_colorPlayer);
+    }
+
+    [Command]
+    private void CmdAddColor(Color forGive) {
+        Spawner.Instance.AddColor(forGive);
     }
 
     public override void OnStopServer()
     {
         Debug.Log("Player:OnStopServer()");
-        Spawner.Instance.GetColor(_colorPlayer);
     }
+
+    // NOTE: commands normalizes vectors and they didn't work correctly on PS
+    // Local methods makes calls to decrease input lag
 
     #region Move
+    // FIX: I removed normalization in order to the player moves correctly,
+    // but may be thus allowed to change direction for the worse. 
     [Command]
     private void CmdMove(Vector3 direction) {
-        Vector3 dir = transform.TransformDirection(direction).normalized * _speed; // NOTE: that nobody can to increase the direction
+        Vector3 dir = transform.TransformDirection(direction) * _speed;
         dir.y = _rb.velocity.y;
         _rb.velocity = dir;
+
+        if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
+            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
+        }
     }
 
-    // it calls to decrease input lag
     public void Move(Vector3 direction) {
         CmdMove(direction);
         
-        Vector3 dir = transform.TransformDirection(direction).normalized * _speed; 
+        Vector3 dir = transform.TransformDirection(direction) * _speed; 
         dir.y = _rb.velocity.y;
         _rb.velocity = dir;
+
+        if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
+            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
+        }
     }
     #endregion
 
     #region Rotation
     [Command]
     private void CmdRotate(Vector2 direction) {
-        Vector2 dir = direction.normalized;
-        transform.Rotate(new Vector3(0, dir.x, 0));
+        transform.Rotate(new Vector3(0, direction.x * _mouseSensitivity.x, 0));
+
+        xRot -= direction.y * _mouseSensitivity.y;
+        xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);
+        _fakeCamera.localRotation = Quaternion.Euler(xRot, 0, 0);
     }
 
     // it calls to decrease input lag
     public void Rotate(Vector2 direction) {
         CmdRotate(direction);
-        Vector2 dir = direction.normalized;
-        transform.Rotate(new Vector3(0, dir.x * _mouseSensitivity.x, 0));
+        //transform.Rotate(new Vector3(0, direction.x * _mouseSensitivity.x, 0));
 
-        xRot -= dir.y;
+        xRot -= direction.y * _mouseSensitivity.y;
         xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);
-        _camera.localRotation = Quaternion.Euler(xRot, 0, 0);
+        Spawner.Instance.Camera.localRotation = Quaternion.Euler(xRot, 0, 0);
     }
     #endregion
 
     private void Start() {
         Debug.Log("Player:Start()");
-        GetComponent<MeshRenderer>().material.color = _colorPlayer;
     }
 }

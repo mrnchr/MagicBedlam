@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - MovedObject
+  - Spawner
   layers:
   - Default
   - TransparentFX
@@ -12,7 +13,7 @@ TagManager:
   - Floor
   - Water
   - UI
-  - 
+  - MovableObject
   - 
   - 
   - 
