@@ -16,7 +16,6 @@ public class Spawner : NetworkManager
 
     private new void Awake() {
         _instance = this;
-        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
         Debug.Log("Spawner:Awake()");
     }
 
@@ -42,7 +41,6 @@ public class Spawner : NetworkManager
         _players = new Queue<Color>(_playerColors);
         _spawnZone = GameObject.FindGameObjectWithTag("Spawner").transform;
 
-
         _spawnZoneX = new Vector2(_spawnZone.position.x - _spawnZone.localScale.x / 2, _spawnZone.position.x + _spawnZone.localScale.x / 2);
         _spawnZoneZ = new Vector2(_spawnZone.position.z - _spawnZone.localScale.z / 2, _spawnZone.position.z + _spawnZone.localScale.z / 2);
     }
@@ -51,6 +49,7 @@ public class Spawner : NetworkManager
     {
         Debug.Log("Spawner:OnClientConnect()");
         base.OnClientConnect();
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
         NetworkClient.AddPlayer();
     }
 
@@ -71,8 +70,23 @@ public class Spawner : NetworkManager
 
     public override void OnClientDisconnect()
     {
+        _camera.SetParent(null);
         base.OnClientDisconnect();
         Debug.Log("Spawner:OnClientDisconnect()");
+    }
+
+    private Vector3 CalculateSpawnPos() {
+        Vector3 startPos = new Vector3 (
+        Random.Range(_spawnZoneX.x, _spawnZoneX.y),
+        _spawnZone.position.y,
+        Random.Range(_spawnZoneZ.x, _spawnZoneZ.y)
+        );
+
+        return startPos;
+    }
+
+    public void Respawn(Transform player) {
+        player.position = CalculateSpawnPos();
     }
 
     public void AddColor(Color colorForGet) {

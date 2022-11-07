@@ -8,6 +8,7 @@ public class Telekinesis : NetworkBehaviour
 {
     [Tooltip("The object taking distance")]
     [SyncVar] [SerializeField] private float _limitTelekinesis;
+    [SyncVar] [SerializeField] private float _attractionTime;
     [SyncVar] [SerializeField] private float _throwingPower;
     [Tooltip("The object position relative to the camera")]
     [SyncVar] [SerializeField] private Vector3 _tookObjectPosition;
@@ -18,6 +19,7 @@ public class Telekinesis : NetworkBehaviour
     [Tooltip("Time for which the player can not take objects after a throwing")]
     [SyncVar] [SerializeField] private float _coolDownTime;
     [SyncVar] [SerializeField] private LayerMask _movableMask;
+    [SyncVar] [SerializeField] private LayerMask _allMasks;
 
     [SyncVar(hook = nameof(WhenChangeObject))] private MovableObject _movableObject;
     [SyncVar(hook = nameof(WhenChangeIsTook))] private bool _isTook;
@@ -37,15 +39,24 @@ public class Telekinesis : NetworkBehaviour
     [Command] 
     private void CmdApplyAbility() {
         _isTook = true;
-
+        
         _defaultParent = _movableObject.transform.parent;
         _movableObject.transform.SetParent(_player.FakeCamera);
+        _movableObject.owner = gameObject;
+        RpcApplyAbility();
         //_movableObject.GetComponent<NetworkIdentity>().AssignClientAuthority(connectionToClient);
-        Debug.Log(_movableObject.GetComponent<NetworkIdentity>().connectionToClient);
         MagicTransition();
 
         _toPlayer = true;
         StartCoroutine(Flight());
+    }
+
+    [ClientRpc]
+    private void RpcApplyAbility() {
+        if(isClientOnly) {
+            _defaultParent = _movableObject.transform.parent;
+            _movableObject.transform.SetParent(_player.FakeCamera);
+        }
     }
 
     public void ApplyAbility() {
@@ -61,15 +72,8 @@ public class Telekinesis : NetworkBehaviour
     }
 
     private void WhenChangeIsTook(bool oldValue, bool newValue) {
-        if(isClientOnly && isLocalPlayer) {
-            if(newValue) {
+        if(newValue) {
                 Flame(_movableObject, false);
-                _defaultParent = _movableObject.transform.parent;
-                _movableObject.transform.SetParent(_player.FakeCamera);
-            }
-            else {
-                _movableObject.transform.SetParent(_defaultParent);
-            }
         }
     }
 
@@ -80,6 +84,10 @@ public class Telekinesis : NetworkBehaviour
     private void FixedUpdate() {
         if(isLocalPlayer) {
             CmdCheckAim(Spawner.Instance.Camera.position, Spawner.Instance.Camera.forward);
+        }
+        if(isServer && _isTook) {
+            StartCoroutine(Flight());
+            // _objectRigidbody.MovePosition(_player.FakeCamera.transform.TransformPoint(_tookObjectPosition));
         }
     }
 
@@ -133,15 +141,14 @@ public class Telekinesis : NetworkBehaviour
 
     [Command]
     private void CmdMagicTransition() {
-        Debug.Log(_movableObject.GetComponent<NetworkIdentity>().connectionToClient);
         _objectRigidbody.isKinematic = _isTook;
         _objectRigidbody.useGravity = !_isTook;
     }
 
     private void MagicTransition() { // only on the server
-        Debug.Log(_movableObject.GetComponent<NetworkIdentity>().connectionToClient);
-        _objectRigidbody.isKinematic = _isTook;
+        // _objectRigidbody.isKinematic = _isTook;
         _objectRigidbody.useGravity = !_isTook;
+        // _objectRigidbody.constraints = _isTook ? RigidbodyConstraints.FreezeAll : RigidbodyConstraints.None;
     }
 
     [Command] 
@@ -153,6 +160,7 @@ public class Telekinesis : NetworkBehaviour
     private void CmdThrowObject() {
         _isTook = false;
         _movableObject.transform.SetParent(_defaultParent);
+        RpcThrowObject();
 
         MagicTransition();
 
@@ -160,16 +168,11 @@ public class Telekinesis : NetworkBehaviour
         RaycastHit hit;
         Vector3 aimPos;
 
-        aimPos = Physics.Raycast(_player.FakeCamera.position, _player.FakeCamera.forward, out hit, _viewDistance, LayerMask.GetMask(), QueryTriggerInteraction.Ignore) ? hit.point 
+        aimPos = Physics.Raycast(_player.FakeCamera.position, _player.FakeCamera.forward, out hit, _viewDistance, _allMasks, QueryTriggerInteraction.Ignore) ? hit.point 
             : _player.FakeCamera.position + _player.FakeCamera.forward * _viewDistance;
-        
-        Debug.Log(hit.transform);
-        Debug.Log(_player.FakeCamera.position);
-        Debug.Log(_player.FakeCamera.forward);
-        Debug.Log(_player.FakeCamera.forward * _viewDistance);
-        Debug.Log(aimPos);
 
         _objectRigidbody.AddForce((aimPos - _movableObject.transform.position).normalized * _throwingPower, ForceMode.Impulse);
+        _movableObject.isThrowing = true;
 
         //_movableObject.GetComponent<NetworkIdentity>().RemoveClientAuthority();
 
@@ -178,25 +181,34 @@ public class Telekinesis : NetworkBehaviour
         StartCoroutine(CoolDown());
         _objectRigidbody = null;
         _defaultParent = null;
+        _movableObject = null;
+    }
+
+    [ClientRpc]
+    private void RpcThrowObject() {
+        if(isClientOnly) {
+            _movableObject.transform.SetParent(_defaultParent);
+            _defaultParent = null;
+        }
+
     }
 
     private void ThrowObject() {
         CmdThrowObject();
-        _defaultParent = null;
     }
 
     private IEnumerator Flight() { // only the server or the host
-        Debug.Log("i fly");
-        Debug.Log(isServer);
+        // if(!_isTook) yield break;
         Vector3 endPos = _tookObjectPosition;
         Vector3 startPos = _movableObject.transform.localPosition;
-        Debug.Log(endPos);
-        Debug.Log(startPos);
+        float procent = 0;
+
         while((_tookObjectPosition - _movableObject.transform.localPosition).sqrMagnitude > Mathf.Pow(_errorRate, 2))
         {
-            _movableObject.transform.localPosition += (endPos - startPos) / 2 * Time.fixedDeltaTime;
-            Debug.Log(_movableObject);
+            _movableObject.transform.localPosition = Vector3.Lerp(_movableObject.transform.localPosition, _tookObjectPosition, procent);
+            procent += 1 / _attractionTime * Time.fixedDeltaTime;
             yield return null;
+            if(!_isTook) break;
         }
 
         _toPlayer = false;

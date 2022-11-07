@@ -26,7 +26,7 @@ public class InputManager : MonoBehaviour
     public void SetPlayer(Player pl) => _pl = pl;
     public void SetTelekinesis(Telekinesis tl) => _tl = tl;
 
-    // private bool EnableAbility() => Input.GetKeyDown(KeyCode.E);
+    private bool EnableAbility() => Input.GetKeyDown(KeyCode.E);
 
     private void Update() {
         MoveInput();
@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
             _pl.Move(_inputMovement);
             _pl.Rotate(_inputMouse);
             
-            if(Input.GetKeyDown(KeyCode.E)) {
+            if(EnableAbility()) {
                 Debug.Log("E button is pressed");
                 _tl.ApplyAbility();
             }

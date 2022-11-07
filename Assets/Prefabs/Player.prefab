@@ -133,7 +133,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6227661062165543709}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.5
   m_Drag: 0
   m_AngularDrag: 0.1
   m_UseGravity: 1
@@ -156,11 +156,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   _fakeCamera: {fileID: 4614362301745946685}
+  _ownMesh: {fileID: 6227661062165543719}
   _rb: {fileID: 6227661062165543711}
   _jumpChecker: {fileID: 6227661063903063638}
   _floorMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 73
   _speed: 10
   _jumpForce: 1.2
   _mouseSensitivity: {x: 1, y: 1}
@@ -181,14 +182,18 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   _limitTelekinesis: 5
-  _throwingPower: 30
+  _attractionTime: 0.5
+  _throwingPower: 8
   _tookObjectPosition: {x: 0.7, y: -0.2, z: 1.5}
   _errorRate: 0.01
   _viewDistance: 10
-  _coolDownTime: 5
+  _coolDownTime: 2
   _movableMask:
     serializedVersion: 2
     m_Bits: 64
+  _allMasks:
+    serializedVersion: 2
+    m_Bits: 95
   _player: {fileID: -4600839087924604186}
 --- !u!65 &6227661062165543713
 BoxCollider:

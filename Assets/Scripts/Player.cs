@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using Mirror;
 
@@ -12,6 +13,7 @@ public class Player : NetworkBehaviour
     }
 
     [Header("Movement")]
+    [SerializeField] private MeshRenderer _ownMesh;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Transform _jumpChecker;
     [SyncVar] [SerializeField] private LayerMask _floorMask;
@@ -33,7 +35,7 @@ public class Player : NetworkBehaviour
     }
 
     private void WhenChangeColor(Color oldValue, Color newValue) {
-        GetComponent<MeshRenderer>().material.color = _colorPlayer;
+        _ownMesh.material.color = _colorPlayer;
     }
 
     public override void OnStartClient()
@@ -67,8 +69,6 @@ public class Player : NetworkBehaviour
     public override void OnStopLocalPlayer()
     {
         Debug.Log("Player:OnStopLocalPlayer()");
-        if(isClientOnly)
-            CmdAddColor(_colorPlayer);
     }
 
     [Command]
@@ -79,6 +79,7 @@ public class Player : NetworkBehaviour
     public override void OnStopServer()
     {
         Debug.Log("Player:OnStopServer()");
+        Spawner.Instance.AddColor(_colorPlayer);
     }
 
     // NOTE: commands normalizes vectors and they didn't work correctly on PS
@@ -94,19 +95,20 @@ public class Player : NetworkBehaviour
         _rb.velocity = dir;
 
         if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
+            _rb.AddForce(Vector3.up * Mathf.Clamp(direction.y, 0, 1) * _jumpForce, ForceMode.Impulse);
         }
     }
 
     public void Move(Vector3 direction) {
-        CmdMove(direction);
+        if(NetworkClient.active)
+            CmdMove(direction);
         
         Vector3 dir = transform.TransformDirection(direction) * _speed; 
         dir.y = _rb.velocity.y;
         _rb.velocity = dir;
 
         if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
+            _rb.AddForce(Vector3.up * Mathf.Clamp(direction.y, 0, 1) * _jumpForce, ForceMode.Impulse);
         }
     }
     #endregion
@@ -123,7 +125,8 @@ public class Player : NetworkBehaviour
 
     // it calls to decrease input lag
     public void Rotate(Vector2 direction) {
-        CmdRotate(direction);
+        if(NetworkClient.active)
+            CmdRotate(direction);
         //transform.Rotate(new Vector3(0, direction.x * _mouseSensitivity.x, 0));
 
         xRot -= direction.y * _mouseSensitivity.y;
