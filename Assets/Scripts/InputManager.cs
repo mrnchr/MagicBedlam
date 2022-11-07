@@ -43,7 +43,7 @@ public class InputManager : MonoBehaviour
     }
 
     private void MoveInput() {
-        _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"));
+        _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Mathf.Ceil(Input.GetAxis("Jump")), Input.GetAxis("Vertical"));
         _inputMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 }

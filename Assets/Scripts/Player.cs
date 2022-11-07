@@ -95,7 +95,7 @@ public class Player : NetworkBehaviour
         _rb.velocity = dir;
 
         if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * Mathf.Clamp(direction.y, 0, 1) * _jumpForce, ForceMode.Impulse);
+            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
         }
     }
 
@@ -107,8 +107,9 @@ public class Player : NetworkBehaviour
         dir.y = _rb.velocity.y;
         _rb.velocity = dir;
 
+
         if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * Mathf.Clamp(direction.y, 0, 1) * _jumpForce, ForceMode.Impulse);
+            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
         }
     }
     #endregion

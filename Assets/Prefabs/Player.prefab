@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 458131475256736423}
   - component: {fileID: 6055423121327570473}
   - component: {fileID: 3998368993203581781}
+  - component: {fileID: 3916317279994010588}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -161,7 +162,7 @@ MonoBehaviour:
   _jumpChecker: {fileID: 6227661063903063638}
   _floorMask:
     serializedVersion: 2
-    m_Bits: 73
+    m_Bits: 72
   _speed: 10
   _jumpForce: 1.2
   _mouseSensitivity: {x: 1, y: 1}
@@ -204,7 +205,7 @@ BoxCollider:
   m_GameObject: {fileID: 6227661062165543709}
   m_Material: {fileID: 13400000, guid: 046dd4910594ef34eb31a5a2a778e62e, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -284,6 +285,20 @@ MonoBehaviour:
   syncAngularVelocity: 1
   clearAngularVelocity: 0
   angularVelocitySensitivity: 0.1
+--- !u!136 &3916317279994010588
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6227661062165543709}
+  m_Material: {fileID: 13400000, guid: 046dd4910594ef34eb31a5a2a778e62e, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6227661062873789793
 GameObject:
   m_ObjectHideFlags: 0
