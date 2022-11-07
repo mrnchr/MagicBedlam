@@ -32,18 +32,17 @@ public class InputManager : MonoBehaviour
         MoveInput();
 
         if(_pl) {
-            _pl.Move(_inputMovement);
+            _pl.CmdMove(_inputMovement);
             _pl.Rotate(_inputMouse);
             
             if(EnableAbility()) {
-                Debug.Log("E button is pressed");
                 _tl.ApplyAbility();
             }
         }
     }
 
     private void MoveInput() {
-        _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Mathf.Ceil(Input.GetAxis("Jump")), Input.GetAxis("Vertical"));
+        _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"));
         _inputMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
     }
 }

@@ -75,6 +75,7 @@ public class Spawner : NetworkManager
         Debug.Log("Spawner:OnClientDisconnect()");
     }
 
+    [Server]
     private Vector3 CalculateSpawnPos() {
         Vector3 startPos = new Vector3 (
         Random.Range(_spawnZoneX.x, _spawnZoneX.y),
@@ -85,15 +86,18 @@ public class Spawner : NetworkManager
         return startPos;
     }
 
+    [Server]
     public void Respawn(Transform player) {
         player.position = CalculateSpawnPos();
     }
 
+    [Server]
     public void AddColor(Color colorForGet) {
         Debug.Log("Spawner:AddColor()");
         _players.Enqueue(colorForGet);
     }
 
+    [Server]
     public Color RemoveColor() {
         Debug.Log("Spawner:RemoveColor()");
         Color newColor = _players.Dequeue();

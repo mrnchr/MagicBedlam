@@ -56,7 +56,6 @@ public class Player : NetworkBehaviour
 
         Destroy(_fakeCamera.gameObject);
         _fakeCamera = Spawner.Instance.Camera;
-        Debug.Log(FakeCamera);
 
         InputManager.Instance.SetPlayer(this);
     }
@@ -71,48 +70,29 @@ public class Player : NetworkBehaviour
         Debug.Log("Player:OnStopLocalPlayer()");
     }
 
-    [Command]
-    private void CmdAddColor(Color forGive) {
-        Spawner.Instance.AddColor(forGive);
-    }
-
     public override void OnStopServer()
     {
         Debug.Log("Player:OnStopServer()");
-        Spawner.Instance.AddColor(_colorPlayer);
+        if(isClientOnly) {
+            Spawner.Instance.AddColor(_colorPlayer);
+        }
     }
 
     // NOTE: commands normalizes vectors and they didn't work correctly on PS
     // Local methods makes calls to decrease input lag
 
-    #region Move
     // FIX: I removed normalization in order to the player moves correctly,
     // but may be thus allowed to change direction for the worse. 
     [Command]
-    private void CmdMove(Vector3 direction) {
+    public void CmdMove(Vector3 direction) {
         Vector3 dir = transform.TransformDirection(direction) * _speed;
         dir.y = _rb.velocity.y;
         _rb.velocity = dir;
 
         if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
+            _rb.velocity += Vector3.up * direction.y * _jumpForce;
         }
     }
-
-    public void Move(Vector3 direction) {
-        if(NetworkClient.active)
-            CmdMove(direction);
-        
-        Vector3 dir = transform.TransformDirection(direction) * _speed; 
-        dir.y = _rb.velocity.y;
-        _rb.velocity = dir;
-
-
-        if(Physics.CheckSphere(_jumpChecker.position, 0.1f, _floorMask)) {
-            _rb.AddForce(Vector3.up * direction.y * _jumpForce, ForceMode.Impulse);
-        }
-    }
-    #endregion
 
     #region Rotation
     [Command]

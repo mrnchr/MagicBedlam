@@ -6,8 +6,8 @@ using Mirror;
 [RequireComponent(typeof(Rigidbody))]
 public class MovableObject : NetworkBehaviour
 {
-    [HideInInspector] [SyncVar] public bool isThrowing;
-    [HideInInspector] [SyncVar] public GameObject owner;
+     [SyncVar] public bool isThrowing;
+     [SyncVar] public GameObject owner;
     private MeshRenderer[] _meshs;
 
     public void Glow(bool highlighted) {
@@ -15,7 +15,7 @@ public class MovableObject : NetworkBehaviour
             if(mesh) {
                 foreach(var mat in mesh.materials) {
                     if(mat) {
-                        if(highlighted) {
+                        if(highlighted && !owner) {
                             mat.EnableKeyword("_EMISSION");
                             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
                         }
@@ -27,26 +27,16 @@ public class MovableObject : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     private void OnTriggerEnter(Collider col) {
-        if(isServer) {
-            if(isThrowing) {
-                isThrowing = false;
-                if(col.tag == "Player" && col.gameObject != owner) {
-                    owner = null;
-                    Respawn(col.transform);
-                    Debug.Log("Detected player");
-                }
+        if(isThrowing && col.gameObject != owner) {
+            isThrowing = false;
+            owner = null;
+            
+            if(col.tag == "Player") {
+                Spawner.Instance.Respawn(col.transform);
             }
         }
-    }
-
-    [Command] 
-    private void CmdRespawn(Transform player) {
-        Spawner.Instance.Respawn(player);
-    }
-
-    private void Respawn(Transform player) { // call only the server
-        Spawner.Instance.Respawn(player);
     }
 
     // TODO: always to set layer mask as MovableObject
