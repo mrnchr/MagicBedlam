@@ -795,7 +795,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1628005699}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: LaunchHost
+        m_MethodName: ForHost
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1524,7 +1524,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1628005699}
         m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: ConnectToHost
+        m_MethodName: ForClient
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1623,6 +1623,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5507560864538440610, guid: 08ccb5a8f9235d24381186e63c52bf14, type: 3}
+      propertyPath: autoStartServerBuild
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5507560864538440614, guid: 08ccb5a8f9235d24381186e63c52bf14, type: 3}
       propertyPath: m_Name
       value: NetworkManager
@@ -1663,6 +1667,8 @@ MonoBehaviour:
   _launchGame: {fileID: 2117949505}
   _waitHost: {fileID: 1822230910}
   _connected: {fileID: 1190528236095310408}
+  _forClientText: {fileID: 384805756}
+  _forHostText: {fileID: 358779131}
   _hostIP: {fileID: 144281541}
 --- !u!114 &1628005700
 MonoBehaviour:
@@ -1731,7 +1737,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1822230908
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2136,7 +2142,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2117949504
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2392,7 +2398,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1190528236095310408
 MonoBehaviour:
   m_ObjectHideFlags: 0

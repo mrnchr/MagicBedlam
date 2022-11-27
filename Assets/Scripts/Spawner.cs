@@ -14,9 +14,14 @@ public class Spawner : NetworkManager
         }
     }
 
-    private new void Awake() {
-        _instance = this;
+    public override void Awake() {
+        base.Awake();
         Debug.Log("Spawner:Awake()");
+        
+        if(_instance != null) return;
+        _instance = this;
+
+        gameObject.transform.position = new Vector3(Random.Range(1, 10), 0, 0);
     }
 
     #endregion
@@ -83,6 +88,10 @@ public class Spawner : NetworkManager
     public override void OnClientDisconnect()
     {
         //_camera.SetParent(null);
+        if(!NetworkClient.isHostClient) {
+            MainMenu.Instance.ChangeClientMenu(false);
+        }
+
         base.OnClientDisconnect();
         Debug.Log("Spawner:OnClientDisconnect()");
     }
@@ -121,9 +130,5 @@ public class Spawner : NetworkManager
         Debug.Log("Spawner:RemoveColor()");
         Color newColor = _players.Dequeue();
         return newColor;
-    }
-
-    private new void Start() {
-        Debug.Log("Spawner:Start()");
     }
 }

@@ -20,6 +20,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button _launchGame;
     [SerializeField] private TMP_Text _waitHost;
     [SerializeField] private TMP_Text _connected;
+    [SerializeField] private TMP_Text _forClientText;
+    [SerializeField] private TMP_Text _forHostText;
+
     [SerializeField] private TMP_InputField _hostIP;
     
     private void Awake() {
@@ -34,25 +37,40 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
-    public void LaunchHost() {
-        if(!NetworkClient.active) {
-            if (Application.platform != RuntimePlatform.WebGLPlayer)
-            {
-                Spawner.Instance.StartHost();
-            }
+    public void ForHost() {
+        if(!NetworkClient.active && Application.platform != RuntimePlatform.WebGLPlayer) {
+            Spawner.Instance.StartHost();
+            _forHostText.text = "Stop Host";
 
             _launchGame.gameObject.SetActive(true);
             _connected.gameObject.SetActive(true);
         }
+        else if(NetworkServer.active && NetworkClient.isConnected) {
+            Spawner.Instance.StopHost();
+            _forHostText.text = "Launch Host";
+
+            _launchGame.gameObject.SetActive(false);
+            _connected.gameObject.SetActive(false);
+        }
+
+
     }
 
-    public void ConnectToHost() {
+    public void ForClient() {
         if(!NetworkClient.active) {
             Spawner.Instance.networkAddress = _hostIP.text;
             Spawner.Instance.StartClient();
-
-            _waitHost.gameObject.SetActive(true);
         }
+        else {
+            Spawner.Instance.StopClient();
+        }
+
+        ChangeClientMenu(NetworkClient.active);
+    }
+
+    public void ChangeClientMenu(bool isConnected) {
+        _forClientText.text = isConnected ? "Stop Client" : "Launch Client";
+        _waitHost.gameObject.SetActive(isConnected);
     }
 
     [Server]
