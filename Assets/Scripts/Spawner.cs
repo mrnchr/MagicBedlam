@@ -31,8 +31,9 @@ public class Spawner : NetworkManager
         }
     }
 
+    public bool isPlaying { get; private set; }
+
     private Transform _spawnZone;
-    [SerializeField] private Color[] _playerColors;
     private Transform _camera;
 
     private Queue<Color> _players;
@@ -54,7 +55,7 @@ public class Spawner : NetworkManager
         Debug.Log("Spawner:OnClientConnect()");
         
         base.OnClientConnect();
-        if(!NetworkClient.isHostClient) {
+        if(!NetworkClient.isHostClient && !isPlaying) {
             Debug.Log("Try to change main menu");
             MainMenu.Instance.ChangeClientMenu(true);
         }
@@ -67,7 +68,9 @@ public class Spawner : NetworkManager
 
     public override void OnServerConnect(NetworkConnectionToClient conn)
     {
-        MainMenu.Instance.ChangeConnected();
+        if(!isPlaying) {
+            MainMenu.Instance.ChangeConnected();
+        }
         Debug.Log("Spawner:OnServerConnect()");
     }
 
@@ -89,7 +92,7 @@ public class Spawner : NetworkManager
     public override void OnClientDisconnect()
     {
         //_camera.SetParent(null);
-        if(!NetworkClient.isHostClient) {
+        if(!NetworkClient.isHostClient && !isPlaying) {
             MainMenu.Instance.ChangeClientMenu(false);
         }
 
@@ -100,7 +103,10 @@ public class Spawner : NetworkManager
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
         base.OnServerDisconnect(conn);
-        MainMenu.Instance.ChangeConnected();
+
+        if(!isPlaying) {
+            MainMenu.Instance.ChangeConnected();
+        }
         Debug.Log("Spawner:OnServerDisconnect()");
     }
 
@@ -108,12 +114,17 @@ public class Spawner : NetworkManager
     {
         Debug.Log("Spawner:OnClientSceneChanged");
         if(SceneManager.GetActiveScene().name == "Island") {
+            isPlaying = true;
+
             if (!NetworkClient.ready) NetworkClient.Ready();
             if (NetworkClient.localPlayer == null)
             {
                 _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
                 NetworkClient.AddPlayer();
             }
+        }
+        else {
+            isPlaying = false;
         }
     }
 

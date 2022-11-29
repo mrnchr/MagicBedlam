@@ -32,7 +32,6 @@ public class MainMenu : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         _instance = this;
 
         _launchGame.gameObject.SetActive(false);

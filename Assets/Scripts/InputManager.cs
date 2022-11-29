@@ -14,6 +14,11 @@ public class InputManager : MonoBehaviour
     }
 
     private void Awake() {
+        if(_instance != null) {
+            Debug.LogError("Two singleton. The second one will be destroyed");
+            Destroy(gameObject);
+            return;
+        }
         _instance = this;
     }
     #endregion

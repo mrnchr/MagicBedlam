@@ -31,7 +31,8 @@ public class Player : NetworkBehaviour
     public override void OnStartServer()
     {
         Debug.Log("Player:OnStartServer()");
-        _colorPlayer = Spawner.Instance.RemoveColor();
+        // TODO: rewrite!!!
+        _colorPlayer = GameManager.Instance.GetPlayerInfo(connectionToClient.connectionId).playerColor;
     }
 
     private void WhenChangeColor(Color oldValue, Color newValue) {
