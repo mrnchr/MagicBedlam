@@ -146,6 +146,24 @@ public class Telekinesis : NetworkBehaviour
         StartCoroutine(CoolDown());
     }
 
+    [Server]
+    public void DropObject() {
+        if(!_isTook) return;
+        _isTook = false;
+        _movableObject.transform.SetParent(_defaultParent);
+        RpcThrowObject();
+
+        MagicTransition();
+
+        _movableObject.isThrowing = false;
+        _movableObject.owner = null;
+
+        // recharge enabling
+        _objectRigidbody = null;
+        _defaultParent = null;
+        _movableObject = null;
+    }
+
     [ClientRpc]
     private void RpcThrowObject() {
         if(isClientOnly) {

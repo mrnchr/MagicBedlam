@@ -31,8 +31,13 @@ public class Player : NetworkBehaviour
     public override void OnStartServer()
     {
         Debug.Log("Player:OnStartServer()");
-        // TODO: rewrite!!!
         _colorPlayer = GameManager.Instance.GetPlayerInfo(connectionToClient.connectionId).playerColor;
+    }
+
+    [Server]
+    public void Dead() {
+        GetComponent<Telekinesis>().DropObject();
+        Spawner.Instance.Respawn(gameObject.transform);
     }
 
     private void WhenChangeColor(Color oldValue, Color newValue) {

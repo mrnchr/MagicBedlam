@@ -31,11 +31,12 @@ public class MovableObject : NetworkBehaviour
     private void OnTriggerEnter(Collider col) {
         if(isThrowing && col.gameObject != owner) {
             isThrowing = false;
-            owner = null;
             
             if(col.tag == "Player") {
-                Spawner.Instance.Respawn(col.transform);
+                GameManager.Instance.PlayerDeath(col.GetComponent<Player>(), owner.GetComponent<Player>());
             }
+
+            owner = null;
         }
     }
 

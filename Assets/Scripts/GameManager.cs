@@ -68,5 +68,20 @@ public class GameManager : NetworkBehaviour {
     }
 
     public PlayerInfo GetPlayerInfo(int id) => _players.Find((match) => { return match.connId == id; });
+    public int GetIndexPlayerInfo(int id) => _players.FindIndex((match) => { return match.connId == id; });
+
+    [Server]
+    public void PlayerDeath(Player killed, Player killer) {
+        int killerIndex = GetIndexPlayerInfo(killer.connectionToClient.connectionId);
+        PlayerInfo killerInfo = _players[killerIndex];
+        ++killerInfo.scores;
+
+        _players.RemoveAt(killerIndex);
+        _players.Insert(killerIndex, killerInfo);
+
+        Debug.Log($"The {_players[killerIndex].playerColor} player has {_players[killerIndex].scores} scores in total");
+
+        killed.Dead();
+    }
 
 }

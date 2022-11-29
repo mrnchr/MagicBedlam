@@ -77,13 +77,8 @@ public class Spawner : NetworkManager
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
         Debug.Log("Spawner:OnServerAddPlayer()");
-        Vector3 startPos = new Vector3 (
-        Random.Range(_spawnZoneX.x, _spawnZoneX.y),
-        10, //_spawnZone.position.y,
-        Random.Range(_spawnZoneZ.x, _spawnZoneZ.y)
-        );
 
-        GameObject player = Instantiate(playerPrefab, startPos, Quaternion.identity);
+        GameObject player = Instantiate(playerPrefab, CalculateSpawnPos(), Quaternion.identity);
 
         player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
@@ -140,7 +135,7 @@ public class Spawner : NetworkManager
     private Vector3 CalculateSpawnPos() {
         Vector3 startPos = new Vector3 (
         Random.Range(_spawnZoneX.x, _spawnZoneX.y),
-        _spawnZone.position.y,
+        10, //_spawnZone.position.y,
         Random.Range(_spawnZoneZ.x, _spawnZoneZ.y)
         );
 
