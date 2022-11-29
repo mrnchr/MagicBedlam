@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Mirror;
 
 public class Spawner : NetworkManager
@@ -20,8 +21,6 @@ public class Spawner : NetworkManager
         
         if(_instance != null) return;
         _instance = this;
-
-        gameObject.transform.position = new Vector3(Random.Range(1, 10), 0, 0);
     }
 
     #endregion
@@ -53,10 +52,12 @@ public class Spawner : NetworkManager
     public override void OnClientConnect()
     {
         Debug.Log("Spawner:OnClientConnect()");
+        
         base.OnClientConnect();
-
-        //_camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
-        //NetworkClient.AddPlayer();
+        if(!NetworkClient.isHostClient) {
+            Debug.Log("Try to change main menu");
+            MainMenu.Instance.ChangeClientMenu(true);
+        }
     }
 
     public override void OnStartClient()
@@ -101,6 +102,27 @@ public class Spawner : NetworkManager
         base.OnServerDisconnect(conn);
         MainMenu.Instance.ChangeConnected();
         Debug.Log("Spawner:OnServerDisconnect()");
+    }
+
+    public override void OnClientSceneChanged()
+    {
+        Debug.Log("Spawner:OnClientSceneChanged");
+        if(SceneManager.GetActiveScene().name == "Island") {
+            if (!NetworkClient.ready) NetworkClient.Ready();
+            if (NetworkClient.localPlayer == null)
+            {
+                _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
+                NetworkClient.AddPlayer();
+            }
+        }
+    }
+
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        Debug.Log("Spawner:OnServerSceneChanged");
+        if(sceneName == "Island") {
+            Debug.Log($"The game is true");
+        }
     }
 
     [Server]

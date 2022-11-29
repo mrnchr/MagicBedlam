@@ -72,3 +72,6 @@ crashlytics-build.properties
 # Exceptions
 !*.dll
 !*.obj
+
+# Test files of the project
+/[Aa]ssets/**/*[Tt]est*.*

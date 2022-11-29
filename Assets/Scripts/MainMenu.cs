@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using Mirror;
 
@@ -26,6 +27,12 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TMP_InputField _hostIP;
     
     private void Awake() {
+        if(_instance != null) {
+            Debug.LogError("Two singleton. The second one will be destroyed");
+            Destroy(gameObject);
+            return;
+        }
+
         _instance = this;
 
         _launchGame.gameObject.SetActive(false);
@@ -52,8 +59,6 @@ public class MainMenu : MonoBehaviour
             _launchGame.gameObject.SetActive(false);
             _connected.gameObject.SetActive(false);
         }
-
-
     }
 
     public void ForClient() {
@@ -64,18 +69,22 @@ public class MainMenu : MonoBehaviour
         else {
             Spawner.Instance.StopClient();
         }
-
-        ChangeClientMenu(NetworkClient.active);
     }
 
     public void ChangeClientMenu(bool isConnected) {
         _forClientText.text = isConnected ? "Stop Client" : "Launch Client";
         _waitHost.gameObject.SetActive(isConnected);
+        Debug.Log("Main menu is changed");
     }
 
     [Server]
     public void ChangeConnected() {
         Debug.Log("MainMenu:ChangeConnected~print connected");
         _connected.text = $"Connected: {NetworkServer.connections.Count}";
+    }
+
+    [Server]
+    public void PlayGame() {
+        Spawner.Instance.ServerChangeScene("Island");
     }
 }
