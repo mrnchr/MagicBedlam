@@ -45,8 +45,13 @@ public class GameManager : NetworkBehaviour {
     [SerializeField] private float _gameTime;
     [SerializeField] private int _winScores;
 
-    [SyncVar] private float _currentTime;
+    [SyncVar(hook = nameof(WhenChangeCurrentTime))] private float _currentTime;
     private readonly SyncList<PlayerInfo> _players = new SyncList<PlayerInfo>();
+
+    // NOTE: Will it be faster to call this function every second?
+    public void WhenChangeCurrentTime(float oldTime, float newTime) {
+        GameMenu.Instance.ChangeTime(Mathf.RoundToInt(newTime));
+    }
 
     public override void OnStartServer()
     {
