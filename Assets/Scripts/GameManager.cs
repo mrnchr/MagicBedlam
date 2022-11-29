@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,10 @@ public struct PlayerInfo {
         playerColor = color;
         this.scores = scores;
     }
+
+    //public int CompareTo(PlayerInfo compared) { 
+    //    return scores.CompareTo(compared.scores);
+    //}
 }
 
 public class GameManager : NetworkBehaviour {
@@ -50,7 +55,7 @@ public class GameManager : NetworkBehaviour {
         int colorIndex;
 
         foreach(var conn in NetworkServer.connections) {
-            colorIndex = Random.Range(0, colors.Count);
+            colorIndex = UnityEngine.Random.Range(0, colors.Count);
 
             // TODO: add check when client reconnects
             info = new PlayerInfo(conn.Key, colors[colorIndex], 0);
@@ -65,6 +70,10 @@ public class GameManager : NetworkBehaviour {
     [ServerCallback]
     private void FixedUpdate() {
         _currentTime -= Time.fixedDeltaTime;
+
+        if(_currentTime <= 0) {
+            Win();
+        }
     }
 
     public PlayerInfo GetPlayerInfo(int id) => _players.Find((match) => { return match.connId == id; });
@@ -79,9 +88,23 @@ public class GameManager : NetworkBehaviour {
         _players.RemoveAt(killerIndex);
         _players.Insert(killerIndex, killerInfo);
 
+        //List<PlayerInfo> players = new List<PlayerInfo>();
+        //_players.CopyTo<PlayerInfo>(players);
+        //players.Sort();
+
         Debug.Log($"The {_players[killerIndex].playerColor} player has {_players[killerIndex].scores} scores in total");
 
         killed.Dead();
+
+        if(_players[killerIndex].scores >= _winScores) {
+            Win();
+        }
+    }
+
+    [Server]
+    private void Win() {
+        Debug.Log($"Winner is {_players[0].playerColor}. He has {_players[0].scores} scores");
+        Spawner.Instance.StopHost();
     }
 
 }
