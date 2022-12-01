@@ -39,6 +39,15 @@ public class Spawner : NetworkManager
     private Queue<Color> _players;
     private Vector2 _spawnZoneX;
     private Vector2 _spawnZoneZ;
+    private int _selfConnection;
+
+    public int SelfConnection {
+        get {
+            return _selfConnection;
+        }
+    }
+
+    public void SetConnection(int conn) => _selfConnection = conn;
 
     public override void OnStartServer()
     {

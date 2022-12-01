@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using Mirror;
 using TMPro;
 
-public class GameMenu : MonoBehaviour
+public class GameMenu : NetworkBehaviour
 {
     #region Singleton
     static private GameMenu _instance;
@@ -25,6 +27,27 @@ public class GameMenu : MonoBehaviour
     #endregion
 
     [SerializeField] private TMP_Text _timeText;
+    [SerializeField] private Image _cursor;
+    [SerializeField] private TMP_Text[] _infos;
+
+    public override void OnStartClient()
+    {
+        PlayerInfo[] players = GameManager.Instance.GetAllPlayerInfo();
+
+        for(int i = 0; i < players.Length; i++) {
+            _infos[i].color =  players[i].playerColor;
+            _infos[i].text = players[i].scores.ToString();
+        }
+
+        for(int i = players.Length; i < _infos.Length; i++) {
+            _infos[i].gameObject.SetActive(false);
+        }
+    }
+
+    public void SetColor() {
+        Color self = GameManager.Instance.GetPlayerInfo(Spawner.Instance.SelfConnection).playerColor;
+        _timeText.color = _cursor.color = self;
+    }
 
     public void ChangeTime(int time) {
         _timeText.text = $"{time / 60}:{(time % 60).ToString("00")}";

@@ -25,23 +25,39 @@ public class Player : NetworkBehaviour
     [SyncVar] [SerializeField] [Tooltip("Value when looking up")] private float _minViewY;
     [SyncVar] [SerializeField] [Tooltip("Value when looking down")] private float _maxViewY;
 
+    [SyncVar(hook = nameof(WhenChangeSelfColor))] private Color _selfColor;
+
     private float xRot;
-    [SyncVar(hook = nameof(WhenChangeColor))] private Color _colorPlayer;
+
+    public void WhenChangeSelfColor(Color oldColor, Color newColor) {
+        _ownMesh.material.color = newColor;
+    }
 
     public override void OnStartServer()
     {
         Debug.Log("Player:OnStartServer()");
-        _colorPlayer = GameManager.Instance.GetPlayerInfo(connectionToClient.connectionId).playerColor;
+        Debug.Log($"Connection on the server: {connectionToClient}");
+        _selfColor = GameManager.Instance.GetPlayerInfo(connectionToClient.connectionId).playerColor;
+        StartCoroutine(WaitForRpc()); // Rpc does not run immediately
+    }
+
+    [Server]
+    private IEnumerator WaitForRpc() {
+        yield return new WaitForSeconds(0.1f);
+        RpcSetLocalClient(connectionToClient.connectionId);
+    }
+
+    [ClientRpc]
+    private void RpcSetLocalClient(int conn) {        
+        if(!isLocalPlayer) return;
+        Spawner.Instance.SetConnection(conn);
+        GameMenu.Instance.SetColor();
     }
 
     [Server]
     public void Dead() {
         GetComponent<Telekinesis>().DropObject();
         Spawner.Instance.Respawn(gameObject.transform);
-    }
-
-    private void WhenChangeColor(Color oldValue, Color newValue) {
-        _ownMesh.material.color = _colorPlayer;
     }
 
     public override void OnStartClient()
@@ -80,7 +96,7 @@ public class Player : NetworkBehaviour
     {
         Debug.Log("Player:OnStopServer()");
         if(isClientOnly) {
-            Spawner.Instance.AddColor(_colorPlayer);
+            //Spawner.Instance.AddColor(_colorPlayer);
         }
     }
 

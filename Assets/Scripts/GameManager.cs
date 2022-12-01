@@ -59,14 +59,18 @@ public class GameManager : NetworkBehaviour {
         PlayerInfo info;
         int colorIndex;
 
+        int index = 0;
+
         foreach(var conn in NetworkServer.connections) {
             colorIndex = UnityEngine.Random.Range(0, colors.Count);
 
             // TODO: add check when client reconnects
             info = new PlayerInfo(conn.Key, colors[colorIndex], 0);
             _players.Add(info);
-
             colors.RemoveAt(colorIndex);
+
+            Debug.Log($"Player is added with {_players[index].connId}, {_players[index].playerColor}, {_players[index].scores}");
+            index++;
         }
 
         _currentTime = _gameTime;
@@ -83,6 +87,12 @@ public class GameManager : NetworkBehaviour {
 
     public PlayerInfo GetPlayerInfo(int id) => _players.Find((match) => { return match.connId == id; });
     public int GetIndexPlayerInfo(int id) => _players.FindIndex((match) => { return match.connId == id; });
+    public PlayerInfo[] GetAllPlayerInfo() {
+        PlayerInfo[] players = new PlayerInfo[_players.Count];
+        _players.CopyTo(players, 0);
+
+        return players;
+    }
 
     [Server]
     public void PlayerDeath(Player killed, Player killer) {
