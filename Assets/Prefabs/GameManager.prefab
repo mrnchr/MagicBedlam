@@ -53,7 +53,7 @@ MonoBehaviour:
   - {r: 0, g: 0, b: 1, a: 1}
   - {r: 1, g: 1, b: 0, a: 1}
   - {r: 1, g: 0, b: 1, a: 1}
-  _gameTime: 720
+  _gameTime: 420
   _winScores: 50
 --- !u!114 &7985449255951792906
 MonoBehaviour:

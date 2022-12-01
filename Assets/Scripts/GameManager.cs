@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public struct PlayerInfo {
+public struct PlayerInfo : IComparable<PlayerInfo> {
     public int connId;
     public Color playerColor;
     public int scores;
@@ -15,9 +15,9 @@ public struct PlayerInfo {
         this.scores = scores;
     }
 
-    //public int CompareTo(PlayerInfo compared) { 
-    //    return scores.CompareTo(compared.scores);
-    //}
+    public int CompareTo(PlayerInfo compared) { 
+        return -scores.CompareTo(compared.scores);
+    }
 }
 
 public class GameManager : NetworkBehaviour {
@@ -85,11 +85,12 @@ public class GameManager : NetworkBehaviour {
         }
     }
 
-    public PlayerInfo GetPlayerInfo(int id) => _players.Find((match) => { return match.connId == id; });
+    public PlayerInfo GetPlayerInfoByIndex(int index) => _players[index];
+    public PlayerInfo GetPlayerInfoByConn(int id) => _players.Find((match) => { return match.connId == id; });
     public int GetIndexPlayerInfo(int id) => _players.FindIndex((match) => { return match.connId == id; });
-    public PlayerInfo[] GetAllPlayerInfo() {
-        PlayerInfo[] players = new PlayerInfo[_players.Count];
-        _players.CopyTo(players, 0);
+    public List<PlayerInfo> GetAllPlayerInfo() {
+        List<PlayerInfo> players = new List<PlayerInfo>();
+        _players.CopyTo<PlayerInfo>(players);
 
         return players;
     }
@@ -100,19 +101,37 @@ public class GameManager : NetworkBehaviour {
         PlayerInfo killerInfo = _players[killerIndex];
         ++killerInfo.scores;
 
-        _players.RemoveAt(killerIndex);
-        _players.Insert(killerIndex, killerInfo);
-
-        //List<PlayerInfo> players = new List<PlayerInfo>();
-        //_players.CopyTo<PlayerInfo>(players);
-        //players.Sort();
-
-        Debug.Log($"The {_players[killerIndex].playerColor} player has {_players[killerIndex].scores} scores in total");
+        _players[killerIndex] = killerInfo;
 
         killed.Dead();
 
+        GameMenu.Instance.RpcChangePlayerScores(killerIndex, killerInfo.scores);
+
+        SortList();
+
+        StartCoroutine(WaitToUpdateTable());
+
+        Debug.Log($"The {_players[killerIndex].playerColor} player has {_players[killerIndex].scores} scores in total");
+
         if(_players[killerIndex].scores >= _winScores) {
             Win();
+        }
+    }
+
+    [Server]
+    IEnumerator WaitToUpdateTable() {
+        yield return new WaitForSeconds(0.1f);
+        GameMenu.Instance.RpcChangePlayerTable();
+    }
+
+    [Server]
+    private void SortList() {   
+        List<PlayerInfo> players = new List<PlayerInfo>();
+        _players.CopyTo<PlayerInfo>(players);
+        players.Sort();
+
+        for(int i = 0; i < _players.Count; i++) {
+            _players[i] = players[i];
         }
     }
 

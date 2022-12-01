@@ -32,21 +32,43 @@ public class GameMenu : NetworkBehaviour
 
     public override void OnStartClient()
     {
-        PlayerInfo[] players = GameManager.Instance.GetAllPlayerInfo();
+        List<PlayerInfo> players = GameManager.Instance.GetAllPlayerInfo();
 
-        for(int i = 0; i < players.Length; i++) {
+        for(int i = 0; i < players.Count; i++) {
             _infos[i].color =  players[i].playerColor;
             _infos[i].text = players[i].scores.ToString();
         }
 
-        for(int i = players.Length; i < _infos.Length; i++) {
+        for(int i = players.Count; i < _infos.Length; i++) {
             _infos[i].gameObject.SetActive(false);
         }
     }
 
     public void SetColor() {
-        Color self = GameManager.Instance.GetPlayerInfo(Spawner.Instance.SelfConnection).playerColor;
+        Color self = GameManager.Instance.GetPlayerInfoByConn(Spawner.Instance.SelfConnection).playerColor;
         _timeText.color = _cursor.color = self;
+    }
+
+    [ClientRpc]
+    public void RpcChangePlayerTable() {
+        List<PlayerInfo> infos = GameManager.Instance.GetAllPlayerInfo();
+
+        Vector3[] columnPos = new Vector3[infos.Count];
+        for(int i = 0; i < columnPos.Length; i++) {
+            columnPos[i] = _infos[i].rectTransform.localPosition;
+            Debug.Log($"{i} player: {infos[i].scores} scores");
+        }
+
+        int currentIndex;
+        for(int i = 0; i < columnPos.Length; i++) {
+            currentIndex = infos.FindIndex((match) => { return match.playerColor == _infos[i].color; });
+            _infos[i].rectTransform.localPosition = columnPos[currentIndex];
+        }
+    }
+
+    [ClientRpc]
+    public void RpcChangePlayerScores(int index, int scores) {
+        _infos[index].text = scores.ToString();
     }
 
     public void ChangeTime(int time) {

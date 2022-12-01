@@ -37,7 +37,7 @@ public class Player : NetworkBehaviour
     {
         Debug.Log("Player:OnStartServer()");
         Debug.Log($"Connection on the server: {connectionToClient}");
-        _selfColor = GameManager.Instance.GetPlayerInfo(connectionToClient.connectionId).playerColor;
+        _selfColor = GameManager.Instance.GetPlayerInfoByConn(connectionToClient.connectionId).playerColor;
         StartCoroutine(WaitForRpc()); // Rpc does not run immediately
     }
 
