@@ -12,6 +12,16 @@ public class InputManager : MonoBehaviour
             return _instance;
         }
     }
+    #endregion
+
+    private Vector3 _inputMovement;
+    private Vector2 _inputMouse;
+    private Player _pl;
+    private Telekinesis _tl;
+    private bool _isMoving;
+
+    public void SetPlayer(Player pl) => _pl = pl;
+    public void SetTelekinesis(Telekinesis tl) => _tl = tl;
 
     private void Awake() {
         if(_instance != null) {
@@ -20,28 +30,30 @@ public class InputManager : MonoBehaviour
             return;
         }
         _instance = this;
+
+        _isMoving = true;
     }
-    #endregion
 
-    private Vector3 _inputMovement;
-    private Vector2 _inputMouse;
-    private Player _pl;
-    private Telekinesis _tl;
-
-    public void SetPlayer(Player pl) => _pl = pl;
-    public void SetTelekinesis(Telekinesis tl) => _tl = tl;
-
-    private bool EnableAbility() => Input.GetKeyDown(KeyCode.E);
+    public void SetPause() {
+        _isMoving = !_isMoving;
+        GameMenu.Instance.SetPause(!_isMoving);
+    }
 
     private void Update() {
-        MoveInput();
+        if(!GameManager.Instance.EndOfGame) {
+            if(Input.GetKeyDown(KeyCode.Escape)) {
+                SetPause();
+            }
 
-        if(_pl) {
-            _pl.CmdMove(_inputMovement);
-            _pl.Rotate(_inputMouse);
-            
-            if(EnableAbility()) {
-                _tl.ApplyAbility();
+            if(_isMoving) {
+                MoveInput();
+
+                _pl?.CmdMove(_inputMovement);
+                _pl?.Rotate(_inputMouse);
+                
+                if(Input.GetKeyDown(KeyCode.E)) {
+                    _tl?.ApplyAbility();
+                }
             }
         }
     }

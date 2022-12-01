@@ -26,6 +26,8 @@ public class GameMenu : NetworkBehaviour
     }
     #endregion
 
+    [SerializeField] private GameObject _playMenu;
+    [SerializeField] private GameObject _pauseMenu;
     [SerializeField] private TMP_Text _timeText;
     [SerializeField] private Image _cursor;
     [SerializeField] private TMP_Text[] _infos;
@@ -63,15 +65,30 @@ public class GameMenu : NetworkBehaviour
         for(int i = 0; i < columnPos.Length; i++) {
             currentIndex = infos.FindIndex((match) => { return match.playerColor == _infos[i].color; });
             _infos[i].rectTransform.localPosition = columnPos[currentIndex];
+            _infos[i].text = infos[currentIndex].scores.ToString(); // FIX: do i need to change it?
         }
     }
 
-    [ClientRpc]
-    public void RpcChangePlayerScores(int index, int scores) {
-        _infos[index].text = scores.ToString();
-    }
+    //[ClientRpc]
+    //public void RpcChangePlayerScores(int index, int scores) {
+    //    _infos[index].text = scores.ToString();
+    //}
 
     public void ChangeTime(int time) {
         _timeText.text = $"{time / 60}:{(time % 60).ToString("00")}";
+    }
+
+    public void SetPause(bool isPause) {
+        _playMenu.SetActive(!isPause);
+        _pauseMenu.SetActive(isPause);
+    }
+
+    public void Exit() {
+        if(isServer) {
+            Spawner.Instance.StopHost();
+        }
+        else {
+            Spawner.Instance.StopClient();
+        }
     }
 }

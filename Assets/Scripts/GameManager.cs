@@ -20,6 +20,12 @@ public struct PlayerInfo : IComparable<PlayerInfo> {
     }
 }
 
+public enum GameResult {
+    Defeat = -1,
+    Draw,
+    Win
+}
+
 public class GameManager : NetworkBehaviour {
 
     #region Singleton
@@ -41,16 +47,37 @@ public class GameManager : NetworkBehaviour {
     }
     #endregion
 
+    public GameResult result { get; private set; }
     [SerializeField] private Color[] _playerColors;
     [SerializeField] private float _gameTime;
     [SerializeField] private int _winScores;
-
+    [SyncVar(hook = nameof(WhenChangeEndOfGame))] private bool _endOfGame;
     [SyncVar(hook = nameof(WhenChangeCurrentTime))] private float _currentTime;
     private readonly SyncList<PlayerInfo> _players = new SyncList<PlayerInfo>();
+
+    public bool EndOfGame {
+        get {
+            return _endOfGame;
+        }
+    }
 
     // NOTE: Will it be faster to call this function every second?
     public void WhenChangeCurrentTime(float oldTime, float newTime) {
         GameMenu.Instance.ChangeTime(Mathf.RoundToInt(newTime));
+    }
+
+    public void WhenChangeEndOfGame(bool oldValue, bool newValue) {
+        //if(_players[0].scores == _players[1].scores) {
+        //   result = GameResult.Draw;
+        //}
+        if(_players[0].connId == Spawner.Instance.SelfConnection) {
+            result = GameResult.Win;
+        }
+        else {
+            result = GameResult.Defeat;
+        }
+
+        Debug.Log($"Game is finished. Your result is {result}");
     }
 
     public override void OnStartServer()
@@ -80,7 +107,7 @@ public class GameManager : NetworkBehaviour {
     private void FixedUpdate() {
         _currentTime -= Time.fixedDeltaTime;
 
-        if(_currentTime <= 0) {
+        if(_currentTime <= 0 && !EndOfGame) {
             Win();
         }
     }
@@ -105,7 +132,7 @@ public class GameManager : NetworkBehaviour {
 
         killed.Dead();
 
-        GameMenu.Instance.RpcChangePlayerScores(killerIndex, killerInfo.scores);
+        // GameMenu.Instance.RpcChangePlayerScores(killerIndex, killerInfo.scores);
 
         SortList();
 
@@ -138,6 +165,13 @@ public class GameManager : NetworkBehaviour {
     [Server]
     private void Win() {
         Debug.Log($"Winner is {_players[0].playerColor}. He has {_players[0].scores} scores");
+        _endOfGame = true;
+        StartCoroutine(WaitForEndOfGame());
+    }
+
+    [Server] 
+    private IEnumerator WaitForEndOfGame() {
+        yield return new WaitForSeconds(5);
         Spawner.Instance.StopHost();
     }
 

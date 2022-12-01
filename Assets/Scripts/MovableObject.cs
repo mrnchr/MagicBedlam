@@ -18,6 +18,7 @@ public class MovableObject : NetworkBehaviour
                         if(highlighted && !owner) {
                             mat.EnableKeyword("_EMISSION");
                             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+                            mat.SetColor("_EmissionColor", GameManager.Instance.GetPlayerInfoByConn(Spawner.Instance.SelfConnection).playerColor);
                         }
                         else 
                             mat.DisableKeyword("_EMISSION");
