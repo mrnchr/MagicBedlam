@@ -1,159 +1,88 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Mirror;
 
-public class Spawner : NetworkManager
+public class Spawner : NetworkBehaviour 
 {
     #region Singleton
-    private static Spawner _instance;
+    
+    static private Spawner _instance;
 
-    public static Spawner Instance {
+    static public Spawner Instance {
         get {
             return _instance;
         }
     }
 
-    public override void Awake() {
-        base.Awake();
-        Debug.Log("Spawner:Awake()");
-        
-        if(_instance != null) return;
+    private void Awake() {
+        if(_instance != null) {
+            Debug.LogError("Two singleton. The second one will be destroyed");
+            Destroy(gameObject);
+            return;
+        }
         _instance = this;
     }
 
     #endregion
 
-    public bool isPlaying { get; private set; }
+    [SerializeField] private Transform[] _spawners;
+    [SerializeField] private float _delay;
 
-    private Transform _spawnZone;
+    private bool[] _busy;
 
-    private Queue<Color> _players;
-    private Vector2 _spawnZoneX;
-    private Vector2 _spawnZoneZ;
-    private int _selfConnection;
-
-    public int SelfConnection {
-        get {
-            return _selfConnection;
-        }
+    public override void OnStartServer() {
+        Debug.Log("Spawner:OnStartServer");
+        _busy = new bool[_spawners.Length];
     }
 
-    public void SetConnection(int conn) => _selfConnection = conn;
+    public Vector3 CalculateSpawnPosition() {
 
-    public override void OnStartServer()
-    {
-        Debug.Log("Spawner:OnStartServer()");
-        //_players = new Queue<Color>(_playerColors);
-        //_spawnZone = GameObject.FindGameObjectWithTag("Spawner").transform;
-
-        _spawnZoneX = Vector2.up * 10; //new Vector2(_spawnZone.position.x - _spawnZone.localScale.x / 2, _spawnZone.position.x + _spawnZone.localScale.x / 2);
-        _spawnZoneZ = Vector2.up * 10; //new Vector2(_spawnZone.position.z - _spawnZone.localScale.z / 2, _spawnZone.position.z + _spawnZone.localScale.z / 2);
-    }
-
-    public override void OnClientConnect()
-    {
-        Debug.Log("Spawner:OnClientConnect()");
+        Dictionary<int, bool> tBusy = new Dictionary<int, bool>();
         
-        base.OnClientConnect();
-        if(!NetworkClient.isHostClient && !isPlaying) {
-            Debug.Log("Try to change main menu");
-            MainMenu.Instance.ChangeClientMenu(true);
-        }
-    }
-
-    public override void OnStartClient()
-    {
-        Debug.Log("Spawner:OnStartClient()");
-    }
-
-    public override void OnServerConnect(NetworkConnectionToClient conn)
-    {
-        if(!isPlaying) {
-            MainMenu.Instance.ChangeConnected();
-        }
-        Debug.Log("Spawner:OnServerConnect()");
-    }
-
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        Debug.Log("Spawner:OnServerAddPlayer()");
-
-        GameObject player = Instantiate(playerPrefab, CalculateSpawnPos(), Quaternion.identity);
-
-        player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
-        NetworkServer.AddPlayerForConnection(conn, player);
-    }
-
-    public override void OnClientDisconnect()
-    {
-        //_camera.SetParent(null);
-        if(!NetworkClient.isHostClient && !isPlaying) {
-            MainMenu.Instance.ChangeClientMenu(false);
+        for (int i = 0; i < _busy.Length; i++) {
+            tBusy.Add(i, _busy[i]);
         }
 
-        base.OnClientDisconnect();
-        Debug.Log("Spawner:OnClientDisconnect()");
-    }
+        int spawnIndex = Random.Range(0, tBusy.Count); 
+        int dictionaryIndex;
 
-    public override void OnServerDisconnect(NetworkConnectionToClient conn)
-    {
-        base.OnServerDisconnect(conn);
+        while(tBusy[spawnIndex]) {
+            tBusy.Remove(spawnIndex);
 
-        if(!isPlaying) {
-            MainMenu.Instance.ChangeConnected();
-        }
-        Debug.Log("Spawner:OnServerDisconnect()");
-    }
-
-    public override void OnClientSceneChanged()
-    {
-        Debug.Log("Spawner:OnClientSceneChanged");
-        if(SceneManager.GetActiveScene().name == "Island") {
-            isPlaying = true;
-
-            if (!NetworkClient.ready) NetworkClient.Ready();
-            if (NetworkClient.localPlayer == null)
-            {
-                NetworkClient.AddPlayer();
+            dictionaryIndex = Random.Range(0, tBusy.Count);
+            foreach(var busy in tBusy) {
+                spawnIndex = busy.Key;
+                --dictionaryIndex;
+                if(dictionaryIndex < 0) 
+                    break;
             }
         }
-        else {
-            isPlaying = false;
-        }
-    }
 
-    public override void OnServerSceneChanged(string sceneName)
-    {
-        Debug.Log("Spawner:OnServerSceneChanged");
-        if(sceneName == "Island") {
-            Debug.Log($"The game is true");
-        }
-    }
-
-    [Server]
-    private Vector3 CalculateSpawnPos() {
-        Vector3 startPos = new Vector3 (
-        Random.Range(_spawnZoneX.x, _spawnZoneX.y),
-        10, //_spawnZone.position.y,
-        Random.Range(_spawnZoneZ.x, _spawnZoneZ.y)
+        Vector3 endPosition = new Vector3 (
+            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x,
+                _spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x),
+            _spawners[spawnIndex].position.y,
+            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x,
+                _spawners[spawnIndex].position.z - _spawners[spawnIndex].localScale.z)
         );
 
-        return startPos;
+        //_spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;
+        Debug.Log($"Spawn position: {endPosition}, from object {_spawners[spawnIndex].name}");
+        if(_busy[spawnIndex] == true) {
+            Debug.LogError("Spawn position was calculated from object which is relaxing");
+        }
+
+        _busy[spawnIndex] = true;
+        StartCoroutine(WaitForDelay(spawnIndex));
+
+        return endPosition;
     }
 
-    [Server]
-    public void Respawn(Transform player) {
-        player.position = CalculateSpawnPos();
-    }
+    private IEnumerator WaitForDelay(int spawnIndex) {
+        yield return new WaitForSeconds(_delay);
 
-    public void Disconnect() {
-        if(NetworkClient.isHostClient) {
-            Spawner.Instance.StopHost();
-        }
-        else {
-            Spawner.Instance.StopClient();
-        }
+        _busy[spawnIndex] = false;
+        //_spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.white;
     }
 }

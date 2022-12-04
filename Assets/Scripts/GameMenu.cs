@@ -52,6 +52,6 @@ public class GameMenu : MonoBehaviour
     }
 
     public void Exit() {
-        Spawner.Instance.Disconnect();
+        NetworkInteraction.Instance.Disconnect();
     }
 }

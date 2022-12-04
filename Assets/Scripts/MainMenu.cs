@@ -45,14 +45,14 @@ public class MainMenu : MonoBehaviour
 
     public void ForHost() {
         if(!NetworkClient.active && Application.platform != RuntimePlatform.WebGLPlayer) {
-            Spawner.Instance.StartHost();
+            NetworkInteraction.Instance.StartHost();
             _forHostText.text = "Stop Host";
 
             _launchGame.gameObject.SetActive(true);
             _connected.gameObject.SetActive(true);
         }
         else if(NetworkServer.active && NetworkClient.isConnected) {
-            Spawner.Instance.StopHost();
+            NetworkInteraction.Instance.StopHost();
             _forHostText.text = "Launch Host";
 
             _launchGame.gameObject.SetActive(false);
@@ -62,11 +62,11 @@ public class MainMenu : MonoBehaviour
 
     public void ForClient() {
         if(!NetworkClient.active) {
-            Spawner.Instance.networkAddress = _hostIP.text;
-            Spawner.Instance.StartClient();
+            NetworkInteraction.Instance.networkAddress = _hostIP.text;
+            NetworkInteraction.Instance.StartClient();
         }
         else {
-            Spawner.Instance.StopClient();
+            NetworkInteraction.Instance.StopClient();
         }
     }
 
@@ -84,6 +84,6 @@ public class MainMenu : MonoBehaviour
 
     [Server]
     public void PlayGame() {
-        Spawner.Instance.ServerChangeScene("Island");
+        NetworkInteraction.Instance.ServerChangeScene("Island");
     }
 }

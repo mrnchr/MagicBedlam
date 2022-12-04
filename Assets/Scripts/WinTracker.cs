@@ -25,6 +25,7 @@ public class WinTracker : NetworkBehaviour {
     }
     #endregion
 
+    // NOTE: used that win function by time wouldn't be called several times 
     [SyncVar] private bool _endOfGame;
 
     public bool EndOfGame {
@@ -33,6 +34,7 @@ public class WinTracker : NetworkBehaviour {
         }
     }
 
+    // NOTE: It's needed to process the order of operations and keep track of win event 
     [Server]
     public void PlayerDeath(Player killed, Player killer) {
         killed.Dead();
@@ -64,7 +66,7 @@ public class WinTracker : NetworkBehaviour {
     [Server] 
     private IEnumerator WaitForEndOfGame() {
         yield return new WaitForSeconds(5);
-        Spawner.Instance.Disconnect();
+        NetworkInteraction.Instance.Disconnect();
     }
 
 }

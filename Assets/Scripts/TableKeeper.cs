@@ -56,6 +56,7 @@ public class TableKeeper : MonoBehaviour
 
         _infos[oldIndex].text = scores.ToString();
 
+        // NOTE: you can not to swap positions objects because you have broken indexes
         for(newIndex = oldIndex - 1; newIndex >= 0 && scores > int.Parse(_infos[newIndex].text); --newIndex);
 
         if(newIndex >= 0) {

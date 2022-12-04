@@ -55,14 +55,14 @@ public class Player : NetworkBehaviour
     // [ClientRpc]
     // private void RpcSetLocalClient(int conn) {        
     //     if(!isLocalPlayer) return;
-    //     Spawner.Instance.SetConnection(conn);
+    //     NetworkInteraction.Instance.SetConnection(conn);
     //     GameMenu.Instance.SetColor();
     // }
 
     [Server]
     public void Dead() {
         GetComponent<Telekinesis>().DropObject();
-        Spawner.Instance.Respawn(gameObject.transform);
+        transform.position = Spawner.Instance.CalculateSpawnPosition();
     }
 
     public override void OnStartLocalPlayer()

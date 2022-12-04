@@ -28,6 +28,7 @@ public class MovableObject : NetworkBehaviour
         }
     }
 
+    // NOTE: it's called from here because we need to clean owner after death event
     [ServerCallback]
     private void OnTriggerEnter(Collider col) {
         if(isThrowing && col.gameObject != owner) {
