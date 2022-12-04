@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 6227661062165543711}
   - component: {fileID: -4600839087924604186}
   - component: {fileID: 5938583121857961636}
+  - component: {fileID: 1503159148947103885}
   - component: {fileID: 6227661062165543713}
   - component: {fileID: 458131475256736423}
   - component: {fileID: 6055423121327570473}
@@ -156,18 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  _fakeCamera: {fileID: 4614362301745946685}
   _ownMesh: {fileID: 6227661062165543719}
-  _rb: {fileID: 6227661062165543711}
-  _jumpChecker: {fileID: 6227661063903063638}
-  _floorMask:
-    serializedVersion: 2
-    m_Bits: 72
-  _speed: 10
-  _jumpForce: 1.2
-  _mouseSensitivity: {x: 1, y: 1}
-  _minViewY: -90
-  _maxViewY: 45
 --- !u!114 &5938583121857961636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,7 +185,32 @@ MonoBehaviour:
   _allMasks:
     serializedVersion: 2
     m_Bits: 95
-  _player: {fileID: -4600839087924604186}
+  _mover: {fileID: 1503159148947103885}
+--- !u!114 &1503159148947103885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6227661062165543709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e39fea2419448b04088d4118307d992e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  _fakeCamera: {fileID: 4614362301745946685}
+  _rb: {fileID: 6227661062165543711}
+  _jumpChecker: {fileID: 6227661063903063638}
+  _floorMask:
+    serializedVersion: 2
+    m_Bits: 72
+  _speed: 10
+  _jumpForce: 10
+  _mouseSensitivity: {x: 1, y: 1}
+  _minViewY: -85
+  _maxViewY: 75
 --- !u!65 &6227661062165543713
 BoxCollider:
   m_ObjectHideFlags: 0

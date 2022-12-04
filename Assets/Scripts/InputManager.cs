@@ -16,11 +16,11 @@ public class InputManager : MonoBehaviour
 
     private Vector3 _inputMovement;
     private Vector2 _inputMouse;
-    private Player _pl;
+    private Mover _mover;
     private Telekinesis _tl;
-    private bool _isMoving;
+    private bool _isPause;
 
-    public void SetPlayer(Player pl) => _pl = pl;
+    public void SetMover(Mover mover) => _mover = mover;
     public void SetTelekinesis(Telekinesis tl) => _tl = tl;
 
     private void Awake() {
@@ -31,25 +31,25 @@ public class InputManager : MonoBehaviour
         }
         _instance = this;
 
-        _isMoving = true;
+        _isPause = false;
     }
 
     public void SetPause() {
-        _isMoving = !_isMoving;
-        GameMenu.Instance.SetPause(!_isMoving);
+        _isPause = !_isPause;
+        GameMenu.Instance.SetPause(_isPause);
     }
 
     private void Update() {
-        if(!GameManager.Instance.EndOfGame) {
+        if(!WinTracker.Instance.EndOfGame) {
             if(Input.GetKeyDown(KeyCode.Escape)) {
                 SetPause();
             }
 
-            if(_isMoving) {
+            if(!_isPause) {
                 MoveInput();
 
-                _pl?.CmdMove(_inputMovement);
-                _pl?.Rotate(_inputMouse);
+                _mover?.CmdMove(_inputMovement);
+                _mover?.Rotate(_inputMouse);
                 
                 if(Input.GetKeyDown(KeyCode.E)) {
                     _tl?.ApplyAbility();

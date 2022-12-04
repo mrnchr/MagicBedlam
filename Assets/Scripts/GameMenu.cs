@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Mirror;
-using TMPro;
 
-public class GameMenu : NetworkBehaviour
+public class GameMenu : MonoBehaviour 
 {
     #region Singleton
     static private GameMenu _instance;
@@ -28,67 +24,34 @@ public class GameMenu : NetworkBehaviour
 
     [SerializeField] private GameObject _playMenu;
     [SerializeField] private GameObject _pauseMenu;
-    [SerializeField] private TMP_Text _timeText;
-    [SerializeField] private Image _cursor;
-    [SerializeField] private TMP_Text[] _infos;
+    [SerializeField] private GameObject _winMenu;
+    [SerializeField] private RectTransform _playerTable;
 
-    public override void OnStartClient()
-    {
-        List<PlayerInfo> players = GameManager.Instance.GetAllPlayerInfo();
-
-        for(int i = 0; i < players.Count; i++) {
-            _infos[i].color =  players[i].playerColor;
-            _infos[i].text = players[i].scores.ToString();
-        }
-
-        for(int i = players.Count; i < _infos.Length; i++) {
-            _infos[i].gameObject.SetActive(false);
-        }
-    }
-
-    public void SetColor() {
-        Color self = GameManager.Instance.GetPlayerInfoByConn(Spawner.Instance.SelfConnection).playerColor;
-        _timeText.color = _cursor.color = self;
-    }
-
-    [ClientRpc]
-    public void RpcChangePlayerTable() {
-        List<PlayerInfo> infos = GameManager.Instance.GetAllPlayerInfo();
-
-        Vector3[] columnPos = new Vector3[infos.Count];
-        for(int i = 0; i < columnPos.Length; i++) {
-            columnPos[i] = _infos[i].rectTransform.localPosition;
-            Debug.Log($"{i} player: {infos[i].scores} scores");
-        }
-
-        int currentIndex;
-        for(int i = 0; i < columnPos.Length; i++) {
-            currentIndex = infos.FindIndex((match) => { return match.playerColor == _infos[i].color; });
-            _infos[i].rectTransform.localPosition = columnPos[currentIndex];
-            _infos[i].text = infos[currentIndex].scores.ToString(); // FIX: do i need to change it?
-        }
-    }
-
-    //[ClientRpc]
-    //public void RpcChangePlayerScores(int index, int scores) {
-    //    _infos[index].text = scores.ToString();
-    //}
-
-    public void ChangeTime(int time) {
-        _timeText.text = $"{time / 60}:{(time % 60).ToString("00")}";
+    private void Start() {
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void SetPause(bool isPause) {
         _playMenu.SetActive(!isPause);
         _pauseMenu.SetActive(isPause);
+        
+        Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
+    }
+
+    public void SetWinMenu(bool outOfTime) {
+        _playMenu.SetActive(false);
+        _pauseMenu.SetActive(false);
+        _winMenu.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.Locked;
+
+        _playerTable.SetParent(_winMenu.transform);
+        _playerTable.anchoredPosition = new Vector2(0.5f, 0.5f);
+        _playerTable.pivot = new Vector2(0.5f, 0.5f);
+        _playerTable.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
     }
 
     public void Exit() {
-        if(isServer) {
-            Spawner.Instance.StopHost();
-        }
-        else {
-            Spawner.Instance.StopClient();
-        }
+        Spawner.Instance.Disconnect();
     }
 }

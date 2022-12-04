@@ -18,7 +18,7 @@ public class MovableObject : NetworkBehaviour
                         if(highlighted && !owner) {
                             mat.EnableKeyword("_EMISSION");
                             mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
-                            mat.SetColor("_EmissionColor", GameManager.Instance.GetPlayerInfoByConn(Spawner.Instance.SelfConnection).playerColor);
+                            //mat.SetColor("_EmissionColor", WinTracker.Instance.GetPlayerInfoByConn(Spawner.Instance.SelfConnection).playerColor);
                         }
                         else 
                             mat.DisableKeyword("_EMISSION");
@@ -34,7 +34,7 @@ public class MovableObject : NetworkBehaviour
             isThrowing = false;
             
             if(col.tag == "Player") {
-                GameManager.Instance.PlayerDeath(col.GetComponent<Player>(), owner.GetComponent<Player>());
+                WinTracker.Instance.PlayerDeath(col.GetComponent<Player>(), owner.GetComponent<Player>());
             }
 
             owner = null;

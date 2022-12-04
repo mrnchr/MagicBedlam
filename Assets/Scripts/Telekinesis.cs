@@ -28,7 +28,7 @@ public class Telekinesis : NetworkBehaviour
 
     private Rigidbody _objectRigidbody; // only on the server or the host
     private Transform _defaultParent;
-    [SerializeField] private Player _player; // only on the server or the host
+    [SerializeField] private Mover _mover; // only on the server or the host
 
     public override void OnStartLocalPlayer()
     {
@@ -41,7 +41,7 @@ public class Telekinesis : NetworkBehaviour
         _isTook = true;
 
         _defaultParent = _movableObject.transform.parent;
-        _movableObject.transform.SetParent(_player.FakeCamera);
+        _movableObject.transform.SetParent(_mover.FakeCamera);
         _movableObject.owner = gameObject;
         RpcApplyAbility();
         MagicTransition();
@@ -54,7 +54,7 @@ public class Telekinesis : NetworkBehaviour
     private void RpcApplyAbility() {
         if(isClientOnly) {
             _defaultParent = _movableObject.transform.parent;
-            _movableObject.transform.SetParent(_player.FakeCamera);
+            _movableObject.transform.SetParent(_mover.FakeCamera);
         }
     }
 
@@ -89,7 +89,7 @@ public class Telekinesis : NetworkBehaviour
         if(!_isTook && !_isCoolDown) {
             RaycastHit hit;
 
-            if(Physics.Raycast(_player.FakeCamera.position, _player.FakeCamera.forward, out hit, _limitTelekinesis, _movableMask)) {
+            if(Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _limitTelekinesis, _movableMask)) {
                 if((!_movableObject || _movableObject != hit.transform) && !hit.transform.GetComponent<MovableObject>().owner) {
                     _movableObject = hit.transform.GetComponent<MovableObject>();
                     _objectRigidbody = hit.rigidbody;
@@ -133,8 +133,8 @@ public class Telekinesis : NetworkBehaviour
         RaycastHit hit;
         Vector3 aimPos;
 
-        aimPos = Physics.Raycast(_player.FakeCamera.position, _player.FakeCamera.forward, out hit, _viewDistance, _allMasks, QueryTriggerInteraction.Ignore) ? hit.point 
-            : _player.FakeCamera.position + _player.FakeCamera.forward * _viewDistance;
+        aimPos = Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _viewDistance, _allMasks, QueryTriggerInteraction.Ignore) ? hit.point 
+            : _mover.FakeCamera.position + _mover.FakeCamera.forward * _viewDistance;
 
         _objectRigidbody.AddForce((aimPos - _movableObject.transform.position).normalized * _throwingPower, ForceMode.Impulse);
         _movableObject.isThrowing = true;

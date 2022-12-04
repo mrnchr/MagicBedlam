@@ -25,16 +25,9 @@ public class Spawner : NetworkManager
 
     #endregion
 
-    public Transform Camera {
-        get {
-            return _camera;
-        }
-    }
-
     public bool isPlaying { get; private set; }
 
     private Transform _spawnZone;
-    private Transform _camera;
 
     private Queue<Color> _players;
     private Vector2 _spawnZoneX;
@@ -123,7 +116,6 @@ public class Spawner : NetworkManager
             if (!NetworkClient.ready) NetworkClient.Ready();
             if (NetworkClient.localPlayer == null)
             {
-                _camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
                 NetworkClient.AddPlayer();
             }
         }
@@ -156,16 +148,12 @@ public class Spawner : NetworkManager
         player.position = CalculateSpawnPos();
     }
 
-    [Server]
-    public void AddColor(Color colorForGet) {
-        Debug.Log("Spawner:AddColor()");
-        _players.Enqueue(colorForGet);
-    }
-
-    [Server]
-    public Color RemoveColor() {
-        Debug.Log("Spawner:RemoveColor()");
-        Color newColor = _players.Dequeue();
-        return newColor;
+    public void Disconnect() {
+        if(NetworkClient.isHostClient) {
+            Spawner.Instance.StopHost();
+        }
+        else {
+            Spawner.Instance.StopClient();
+        }
     }
 }
