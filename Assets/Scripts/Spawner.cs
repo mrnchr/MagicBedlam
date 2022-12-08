@@ -37,7 +37,30 @@ public class Spawner : NetworkBehaviour
     }
 
     public Vector3 CalculateSpawnPosition() {
+        int spawnIndex = RandomSpawnIndex();
+        Vector3 endPosition = RandomPositionBySquare(_spawners[spawnIndex].position, _spawners[spawnIndex].localScale);
 
+        // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;
+        Debug.Log($"Spawn position: {endPosition}, from object {_spawners[spawnIndex].name}");
+        if(_busy[spawnIndex] == true) {
+            Debug.LogError("Spawn position was calculated from object which is sleeping");
+        }
+
+        _busy[spawnIndex] = true;
+        StartCoroutine(WaitForDelay(spawnIndex));
+
+        return endPosition;
+    }
+
+    private Vector3 RandomPositionBySquare(Vector3 pos, Vector3 scale) {
+        return new Vector3(RandomPointByLength(pos.x, scale.x / 2), pos.y, RandomPointByLength(pos.z, scale.z / 2));
+    }
+    
+    private float RandomPointByLength(float start, float length) {
+        return Random.Range(start - length, start + length);
+    }
+
+    private int RandomSpawnIndex() {
         Dictionary<int, bool> tBusy = new Dictionary<int, bool>();
         
         for (int i = 0; i < _busy.Length; i++) {
@@ -59,30 +82,13 @@ public class Spawner : NetworkBehaviour
             }
         }
 
-        Vector3 endPosition = new Vector3 (
-            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2,
-                _spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2),
-            _spawners[spawnIndex].position.y,
-            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2,
-                _spawners[spawnIndex].position.z - _spawners[spawnIndex].localScale.z / 2)
-        );
-
-        //_spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;
-        Debug.Log($"Spawn position: {endPosition}, from object {_spawners[spawnIndex].name}");
-        if(_busy[spawnIndex] == true) {
-            Debug.LogError("Spawn position was calculated from object which is relaxing");
-        }
-
-        _busy[spawnIndex] = true;
-        StartCoroutine(WaitForDelay(spawnIndex));
-
-        return endPosition;
+        return spawnIndex;
     }
 
     private IEnumerator WaitForDelay(int spawnIndex) {
         yield return new WaitForSeconds(_delay);
 
         _busy[spawnIndex] = false;
-        //_spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.white;
+        // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.white;
     }
 }
