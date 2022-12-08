@@ -42,7 +42,13 @@ public class Player : NetworkBehaviour
     public override void OnStartServer()
     {
         Debug.Log($"Connection on the server: {connectionToClient}");
-        _ownColor = ColorPicker.Instance.PickColor();
+
+        // NOTE: not to swap these strings. Color have to be got before scores 
+        // that tablekeeper could to decide whether add the player on the table or not
+        _ownColor = NetworkInteraction.Instance.GetColor(connectionToClient.address);
+        _scores = NetworkInteraction.Instance.GetScores(connectionToClient.address);
+
+        Debug.Log($"The player with ip {connectionToClient.address} got color {_ownColor} and {_scores} scores");
         //StartCoroutine(WaitForRpc()); // Rpc does not run immediately
     }
 
@@ -72,12 +78,11 @@ public class Player : NetworkBehaviour
             gameObject.name = $"(Self) {gameObject.name}";
 
         ColorChanger.Instance.SetColor(_ownColor);
-
     }
 
-    
-
-    private void Start() {
-        Debug.Log("Player:Start()");
+    public override void OnStopServer()
+    {
+        if(!isLocalPlayer)
+            NetworkInteraction.Instance.SaveInfo(connectionToClient.address, _ownColor, _scores);
     }
 }

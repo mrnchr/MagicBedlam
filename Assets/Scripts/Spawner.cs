@@ -60,11 +60,11 @@ public class Spawner : NetworkBehaviour
         }
 
         Vector3 endPosition = new Vector3 (
-            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x,
-                _spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x),
+            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2,
+                _spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2),
             _spawners[spawnIndex].position.y,
-            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x,
-                _spawners[spawnIndex].position.z - _spawners[spawnIndex].localScale.z)
+            Random.Range(_spawners[spawnIndex].position.x - _spawners[spawnIndex].localScale.x / 2,
+                _spawners[spawnIndex].position.z - _spawners[spawnIndex].localScale.z / 2)
         );
 
         //_spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;

@@ -29,10 +29,7 @@ public class Mover : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        Debug.Log("Player:OnStartLocalPlayer()");
-        
-        if(isClientOnly)
-            gameObject.name = $"(Self) {gameObject.name}";
+        Debug.Log("Mover:OnStartLocalPlayer()");
 
         Transform camera = GameObject.FindGameObjectWithTag("MainCamera").transform;
         camera.SetParent(transform);

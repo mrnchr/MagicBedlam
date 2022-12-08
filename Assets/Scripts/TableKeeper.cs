@@ -38,6 +38,12 @@ public class TableKeeper : MonoBehaviour
 
     public void AddPlayerInfo(Color playerColor)
     {
+        for(int i = 0; i < _numberOfPlayers; i++) {
+            if(_infos[i].color == playerColor){
+                return;
+            }
+        }
+
         _infos[_numberOfPlayers].gameObject.SetActive(true);
         _infos[_numberOfPlayers].color =  playerColor;
         _infos[_numberOfPlayers].text = "0";
@@ -57,9 +63,8 @@ public class TableKeeper : MonoBehaviour
         _infos[oldIndex].text = scores.ToString();
 
         // NOTE: you can not to swap positions objects because you have broken indexes
-        for(newIndex = oldIndex - 1; newIndex >= 0 && scores > int.Parse(_infos[newIndex].text); --newIndex);
-
-        if(newIndex >= 0) {
+        // NOTE: also you need to change fields each other in loop not to break the order
+        for(newIndex = oldIndex - 1; newIndex >= 0 && scores > int.Parse(_infos[newIndex].text); --newIndex) {
             (_infos[oldIndex].color, _infos[newIndex].color) = (_infos[newIndex].color, _infos[oldIndex].color);
             (_infos[oldIndex].text, _infos[newIndex].text) = (_infos[newIndex].text, _infos[oldIndex].text);
         }

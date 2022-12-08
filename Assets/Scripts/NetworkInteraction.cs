@@ -16,6 +16,27 @@ public class NetworkInteraction : NetworkManager
     }
 
     #endregion
+   
+    public bool isPlaying { get; private set; }
+
+    private int _selfConnection;
+    private string _lastConnection;
+
+    public int SelfConnection {
+        get {
+            return _selfConnection;
+        }
+    }
+
+    public string LastConnection {
+        get {
+            return _lastConnection;
+        }
+    }
+
+    public void SetConnection(int conn) => _selfConnection = conn;
+
+    private List<PlayerInfo> _playerInfos;
 
     public override void Awake() {
         base.Awake();
@@ -28,22 +49,15 @@ public class NetworkInteraction : NetworkManager
         }
         
         _instance = this;
+
+        #if UNITY_EDITOR
+            _lastConnection = "localhost";
+        #endif
     }
-    public bool isPlaying { get; private set; }
-
-    private int _selfConnection;
-
-    public int SelfConnection {
-        get {
-            return _selfConnection;
-        }
-    }
-
-    public void SetConnection(int conn) => _selfConnection = conn;
 
     public override void OnStartServer()
     {
-        Debug.Log("NetworkInteraction:OnStartServer()");
+        _lastConnection = "";
     }
 
     public override void OnClientConnect()
@@ -67,7 +81,15 @@ public class NetworkInteraction : NetworkManager
         if(!isPlaying) {
             MainMenu.Instance.ChangeConnected();
         }
-        Debug.Log("NetworkInteraction:OnServerConnect()");
+        else {
+            if(!_playerInfos.Exists((match) => { return match.ip == conn.address; })) {
+                Debug.Log($"The new player with ip {conn.address} tried to connect to the server. He will be disconnected");
+                conn.Disconnect();
+            }
+            else {
+                Debug.Log($"The old player with ip {conn.address} reconnected to the server");
+            }
+        }
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -87,8 +109,26 @@ public class NetworkInteraction : NetworkManager
             MainMenu.Instance.ChangeClientMenu(false);
         }
 
+        if(!NetworkClient.isHostClient) {
+            _lastConnection = NetworkClient.serverIp;
+        }
+
         base.OnClientDisconnect();
         Debug.Log("NetworkInteraction:OnClientDisconnect()");
+    }
+
+    public override void ServerChangeScene(string newSceneName)
+    {
+        #if UNITY_EDITOR
+            base.ServerChangeScene(newSceneName);
+        #else
+            if(isPlaying || NetworkServer.connections.Count > 1) {
+                base.ServerChangeScene(newSceneName);
+            }
+            else {
+                MainMenu.SurvivorError(true);
+            }
+        #endif
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
@@ -123,6 +163,11 @@ public class NetworkInteraction : NetworkManager
         Debug.Log("NetworkInteraction:OnServerSceneChanged");
         if(sceneName == "Island") {
             Debug.Log($"The game is true");
+            _playerInfos = new List<PlayerInfo>(NetworkServer.connections.Count);
+
+            foreach(var conn in NetworkServer.connections) {
+                _playerInfos.Add(new PlayerInfo(conn.Value.address, ColorPicker.Instance.PickColor()));
+            }
         }
     }
 
@@ -133,5 +178,19 @@ public class NetworkInteraction : NetworkManager
         else {
             StopClient();
         }
+    }
+
+    [Server]
+    public Color GetColor(string ip) => _playerInfos.Find((match) => { return match.ip == ip; }).color;
+
+    [Server]
+    public int GetScores(string ip) => _playerInfos.Find((match) => { return match.ip == ip; }).scores;
+
+    [Server]
+    public void SaveInfo(string ip, in Color playerColor, in int playerScores) {
+        _playerInfos.Remove(_playerInfos.Find((match) => { return match.ip == ip; }));
+        _playerInfos.Add(new PlayerInfo(ip, playerColor, playerScores));
+
+        Debug.Log($"Info about the player with ip {ip} was saved");
     }
 }

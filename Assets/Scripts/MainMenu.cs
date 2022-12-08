@@ -23,6 +23,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TMP_Text _connected;
     [SerializeField] private TMP_Text _forClientText;
     [SerializeField] private TMP_Text _forHostText;
+    [SerializeField] private GameObject _survivorError;
 
     [SerializeField] private TMP_InputField _hostIP;
     
@@ -58,6 +59,8 @@ public class MainMenu : MonoBehaviour
             _launchGame.gameObject.SetActive(false);
             _connected.gameObject.SetActive(false);
         }
+
+        SurvivorError(false);
     }
 
     public void ForClient() {
@@ -74,6 +77,8 @@ public class MainMenu : MonoBehaviour
         _forClientText.text = isConnected ? "Stop Client" : "Launch Client";
         _waitHost.gameObject.SetActive(isConnected);
         Debug.Log("Main menu is changed");
+
+        SurvivorError(false);
     }
 
     [Server]
@@ -85,5 +90,10 @@ public class MainMenu : MonoBehaviour
     [Server]
     public void PlayGame() {
         NetworkInteraction.Instance.ServerChangeScene("Island");
+    }
+
+    [Server]
+    public void SurvivorError(bool active) {
+        _survivorError.SetActive(active);
     }
 }

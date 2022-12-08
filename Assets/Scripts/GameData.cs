@@ -1,4 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
+
+public struct PlayerInfo {
+    public string ip;
+    public Color color;
+    public int scores;
+
+    public PlayerInfo(string ip, Color color, int scores = 0) {
+        this.ip = ip;
+        this.color = color;
+        this.scores = scores;
+    }
+}
 
 public class GameData : MonoBehaviour
 {
