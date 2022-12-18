@@ -2,14 +2,14 @@ using UnityEngine;
 using Mirror;
 
 public class EmissionObject : NetworkBehaviour {
-    [SerializeField] private Material[] _emissionMats;
+    [SerializeField] private MeshRenderer[] _emissionMeshs;
 
-    public bool TryGetColor(Material match, out Color origin) {
+    public bool TryGetColor(MeshRenderer match, out Color origin) {
         origin = Color.black;
 
-        foreach (var mat in _emissionMats) {
+        foreach (var mat in _emissionMeshs) {
             if(match == mat) {
-                origin = mat.GetColor("_EmissionColor");
+                origin = mat.material.GetColor("_EmissionColor");
                 return true;
             }
         }

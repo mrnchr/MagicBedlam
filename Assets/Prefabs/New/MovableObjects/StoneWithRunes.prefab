@@ -153,7 +153,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2f2f274d69ac079448f5bb5120ef4a51, type: 2}
+  - {fileID: 2100000, guid: 594f3743f49790f418128d7ffcb9bcc6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -283,6 +283,7 @@ MonoBehaviour:
   syncInterval: 0.1
   isThrowing: 0
   owner: {fileID: 0}
+  _selfEmission: {fileID: 0}
 --- !u!64 &4827930753393523847
 MeshCollider:
   m_ObjectHideFlags: 0

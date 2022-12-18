@@ -198,6 +198,7 @@ MonoBehaviour:
   syncInterval: 0.1
   isThrowing: 0
   owner: {fileID: 0}
+  _selfEmission: {fileID: 0}
 --- !u!136 &2758692377198172014
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -255,5 +256,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.23657614, z: 0.116886884}
-  m_Center: {x: 0, y: 0.0064696968, z: -0.00485228}
+  m_Size: {x: 0.09917191, y: 0.23657614, z: 0.116886884}
+  m_Center: {x: 0.000000014901161, y: 0.0064696968, z: -0.00485228}

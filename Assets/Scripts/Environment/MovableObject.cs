@@ -22,7 +22,7 @@ public class MovableObject : NetworkBehaviour
                     }
                     else {
                         Color oldEmission;
-                        if(_selfEmission && _selfEmission.TryGetColor(mat, out oldEmission)) {
+                        if(_selfEmission && _selfEmission.TryGetColor(mesh, out oldEmission)) {
                             mat.SetColor("_EmissionColor", oldEmission);
                         }
                         else {
