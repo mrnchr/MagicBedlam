@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4321327464742115066}
   - component: {fileID: 5979730144266620588}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,9 +62,9 @@ GameObject:
   - component: {fileID: 639301163153665489}
   - component: {fileID: 4633313172560392046}
   - component: {fileID: 4349540824068886036}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: chest
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

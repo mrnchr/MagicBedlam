@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 8149736851001175113}
   - component: {fileID: 7675426028910742436}
   - component: {fileID: 7423666721096597111}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: candle
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -222,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8326588048343162057}
   - component: {fileID: 7025969444439202276}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

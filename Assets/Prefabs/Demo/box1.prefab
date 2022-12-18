@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6714014031520368147}
   - component: {fileID: 40243932460854353}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,9 +62,9 @@ GameObject:
   - component: {fileID: 1583419307812931421}
   - component: {fileID: 2750223519682016462}
   - component: {fileID: 813226257822482359}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: box1
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

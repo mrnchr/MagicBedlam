@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6456347147026943348}
   - component: {fileID: 6906674352769091230}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,9 +63,9 @@ GameObject:
   - component: {fileID: 5101673189171273520}
   - component: {fileID: 3776857548333931112}
   - component: {fileID: 9219401489466976048}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Chair1broken
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

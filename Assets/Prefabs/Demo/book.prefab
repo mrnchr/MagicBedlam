@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6014916792862752058}
   - component: {fileID: 7624593071658810995}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,9 +62,9 @@ GameObject:
   - component: {fileID: 3000244270761663855}
   - component: {fileID: 4932984776532056930}
   - component: {fileID: -3495030631897838882}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: book
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

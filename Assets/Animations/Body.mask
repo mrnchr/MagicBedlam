@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Body
+  m_Mask: 01000000010000000100000001000000010000000000000000000000000000000000000001000000010000000000000000000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Armature
+    m_Weight: 1
+  - m_Path: Armature/Body
+    m_Weight: 1
+  - m_Path: Armature/Body/Head
+    m_Weight: 1
+  - m_Path: Armature/Body/Head/Head_end
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L/Leg_L_1
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L/Leg_L_1/Leg_L_2
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L/Leg_L_1/Leg_L_2/Bone.012
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L/Leg_L_1/Leg_L_2/Bone.012/Foot_L
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_L/Leg_L_1/Leg_L_2/Bone.012/Foot_L/Foot_L_end
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_R
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_R/Leg_R_1
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_R/Leg_R_1/Leg_R_2
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_R/Leg_R_1/Leg_R_2/Foot_R
+    m_Weight: 1
+  - m_Path: Armature/Body/Leg_R/Leg_R_1/Leg_R_2/Foot_R/Foot_R_end
+    m_Weight: 1
+  - m_Path: Armature/Body/Shoulder_L
+    m_Weight: 1
+  - m_Path: Armature/Body/Shoulder_L/Arm_L
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_1
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_1/Finger_L_1_end
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_2
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_2/Finger_L_2_end
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_3
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_L/Arm_L/Finger_L_3/Finger_L_3_end
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R
+    m_Weight: 1
+  - m_Path: Armature/Body/Shoulder_R/Arm_R
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_1
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_1/Finger_R_1_end
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_2
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_2/Finger_R_2_end
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_3
+    m_Weight: 0
+  - m_Path: Armature/Body/Shoulder_R/Arm_R/Finger_R_3/Finger_R_3_end
+    m_Weight: 0
+  - m_Path: Armature/PB_Back
+    m_Weight: 1
+  - m_Path: Armature/PB_Back/PB_Back_1
+    m_Weight: 1
+  - m_Path: Armature/PB_Back/PB_Back_1/PB_Back_2
+    m_Weight: 1
+  - m_Path: Armature/PB_Back/PB_Back_1/PB_Back_2/PB_Back_3
+    m_Weight: 1
+  - m_Path: Armature/PB_Back/PB_Back_1/PB_Back_2/PB_Back_3/PB_Back_3.001
+    m_Weight: 1
+  - m_Path: Armature/PB_Back/PB_Back_1/PB_Back_2/PB_Back_3/PB_Back_3.001/PB_Back_3.001_end
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape/PB_Cape_1
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape/PB_Cape_1/PB_Cape_2
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape/PB_Cape_1/PB_Cape_2/PB_Cape_3
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape/PB_Cape_1/PB_Cape_2/PB_Cape_3/PB_Cape_4
+    m_Weight: 1
+  - m_Path: Armature/PB_Cape/PB_Cape_1/PB_Cape_2/PB_Cape_3/PB_Cape_4/PB_Cape_4_end
+    m_Weight: 1
+  - m_Path: Armature/PB_L
+    m_Weight: 1
+  - m_Path: Armature/PB_L/PB_L_1
+    m_Weight: 1
+  - m_Path: Armature/PB_L/PB_L_1/PB_L_2
+    m_Weight: 1
+  - m_Path: Armature/PB_L/PB_L_1/PB_L_2/PB_L_3
+    m_Weight: 1
+  - m_Path: Armature/PB_L/PB_L_1/PB_L_2/PB_L_3/PB_L_3_end
+    m_Weight: 1
+  - m_Path: Armature/PB_R
+    m_Weight: 1
+  - m_Path: Armature/PB_R/PB_R_1
+    m_Weight: 1
+  - m_Path: Armature/PB_R/PB_R_1/PB_R_2
+    m_Weight: 1
+  - m_Path: Armature/PB_R/PB_R_1/PB_R_2/PB_R_3
+    m_Weight: 1
+  - m_Path: Armature/PB_R/PB_R_1/PB_R_2/PB_R_3/PB_R_3_end
+    m_Weight: 1
+  - m_Path: Cube
+    m_Weight: 1

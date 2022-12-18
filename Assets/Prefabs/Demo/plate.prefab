@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 2724318116169101462}
   - component: {fileID: 5222064550670779087}
   - component: {fileID: -2040990405040623984}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: plate
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -222,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3012729112284545458}
   - component: {fileID: 1545708118002215501}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

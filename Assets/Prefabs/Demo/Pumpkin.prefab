@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2954149082838240582}
   - component: {fileID: 5511128088949264262}
   - component: {fileID: 1683524675977623341}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1908124011948921943}
   - component: {fileID: 2784267062593947260}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,9 +146,9 @@ GameObject:
   - component: {fileID: 4360757522655977607}
   - component: {fileID: -214282252954528596}
   - component: {fileID: -1395872326464114943}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pumpkin
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

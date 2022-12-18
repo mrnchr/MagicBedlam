@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 7068266232393157323}
   - component: {fileID: 1305923008832991895}
   - component: {fileID: 6680670098415656917}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HandStatueOfWizard
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -221,7 +221,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3434662821400490839}
   - component: {fileID: 1161025595119077887}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

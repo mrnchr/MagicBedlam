@@ -18,9 +18,9 @@ GameObject:
   - component: {fileID: 4372068415080872700}
   - component: {fileID: 7763301225854112792}
   - component: {fileID: 7049362149545532360}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Pear
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1dcbee33104637645936d1d7624fba58, type: 2}
+  - {fileID: 2100000, guid: 7020bea69007c8849b1cd6531c5aabfd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 8916133075443518173}
   - component: {fileID: 2249615043388573725}
   - component: {fileID: 4908463995183345846}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -322,7 +322,7 @@ GameObject:
   - component: {fileID: 4485260476430644562}
   - component: {fileID: 8848734601408301150}
   - component: {fileID: 3027064278395750217}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -404,7 +404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3610602108169870130}
   - component: {fileID: 4811047665440922791}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

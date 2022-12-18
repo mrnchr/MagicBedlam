@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6949237323992205765}
   - component: {fileID: 4194739755548528003}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,9 +63,9 @@ GameObject:
   - component: {fileID: 8913023382320264830}
   - component: {fileID: 5335121697714647374}
   - component: {fileID: -7932181994069299344}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: spoon
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

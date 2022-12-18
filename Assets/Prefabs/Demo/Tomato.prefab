@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1933031523595204989}
   - component: {fileID: 7484897793382179294}
   - component: {fileID: 1288621235010008233}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 21334335330281662}
   - component: {fileID: 2122093661751595078}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 8450663524271505335}
   - component: {fileID: 3581791261118726843}
   - component: {fileID: 7024027708141030828}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 4458853646488477562}
   - component: {fileID: 6250401179263543995}
   - component: {fileID: 8341364900925075209}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 567498102164195354}
   - component: {fileID: 7658621117466194830}
   - component: {fileID: 620667209249054669}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -388,7 +388,7 @@ GameObject:
   - component: {fileID: 3566035225965594840}
   - component: {fileID: 2828192660861807276}
   - component: {fileID: 1059529074672870454}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -477,9 +477,9 @@ GameObject:
   - component: {fileID: 2990626107237654903}
   - component: {fileID: -8530010785034727457}
   - component: {fileID: -5901306074894195709}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tomato
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -493,7 +493,7 @@ Transform:
   m_GameObject: {fileID: 7027522517778542520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.185, y: -0.324, z: 19.316}
-  m_LocalScale: {x: 9.406415, y: 9.406414, z: 9.406414}
+  m_LocalScale: {x: 0.74957025, y: 0.74956864, z: 0.7495686}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3566035225965594840}
@@ -688,7 +688,7 @@ GameObject:
   - component: {fileID: 6874180253686946930}
   - component: {fileID: 5012579791806612422}
   - component: {fileID: 5470867713793110878}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}

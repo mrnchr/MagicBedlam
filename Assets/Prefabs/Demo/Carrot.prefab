@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6624777452127518837}
   - component: {fileID: 7762424891047830157}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 1209029409358323754}
   - component: {fileID: 2063229622735150963}
   - component: {fileID: 5893250859731615831}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 280918931746781503}
   - component: {fileID: 7449601928261270527}
   - component: {fileID: 4342644809688433492}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,9 +229,9 @@ GameObject:
   - component: {fileID: 6556159495369996769}
   - component: {fileID: 332355418777295372}
   - component: {fileID: 804972129801520535}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Carrot
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,7 +245,7 @@ Transform:
   m_GameObject: {fileID: 5955068098889619135}
   m_LocalRotation: {x: 0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: -14.404161, y: -0.305, z: 19.729}
-  m_LocalScale: {x: 7.0666966, y: 7.066697, z: 7.066696}
+  m_LocalScale: {x: 0.74957025, y: 0.7495686, z: 0.74956864}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 280918931746781503}
@@ -440,7 +440,7 @@ GameObject:
   - component: {fileID: 2752108721931126837}
   - component: {fileID: 8430743797832477549}
   - component: {fileID: 9102037149364339611}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -523,7 +523,7 @@ GameObject:
   - component: {fileID: 2471672264244883723}
   - component: {fileID: 2117563604691055244}
   - component: {fileID: 4469137484772321734}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -606,7 +606,7 @@ GameObject:
   - component: {fileID: 8101302880900676674}
   - component: {fileID: 2440801607357503253}
   - component: {fileID: 3630114726051739413}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}

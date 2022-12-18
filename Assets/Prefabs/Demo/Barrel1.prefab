@@ -17,9 +17,9 @@ GameObject:
   - component: {fileID: 4805093922291939946}
   - component: {fileID: -3255807681037670047}
   - component: {fileID: -9155449401908265929}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Barrel1
-  m_TagString: MovedObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -224,7 +224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8657955334236924927}
   - component: {fileID: 3936771415262156096}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 9028575897302564691}
   - component: {fileID: 7564105591726173761}
   - component: {fileID: 8555900852264019823}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
