@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 4863338925880433971}
   - component: {fileID: 716581882727671770}
   - component: {fileID: 6650121690709457793}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -500,14 +500,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3192206160883242685}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.35
   m_Drag: 0
-  m_AngularDrag: 0
+  m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &-5716687044956871686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -538,7 +538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.01
   target: {fileID: 8990565381286541725}
   clientAuthority: 0
   syncVelocity: 1
@@ -560,7 +560,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.01
   clientAuthority: 0
   sendRate: 30
   bufferTimeMultiplier: 2
@@ -597,9 +597,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0.01
   isThrowing: 0
   owner: {fileID: 0}
+  _selfEmission: {fileID: 0}
 --- !u!1 &4571065323456767435
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,7 +660,7 @@ GameObject:
   - component: {fileID: 6355971340670379627}
   - component: {fileID: 73566837414666753}
   - component: {fileID: 3082497652216762904}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -950,7 +951,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848654, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848755, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_RootOrder
@@ -1032,7 +1033,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848654, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848755, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_RootOrder
@@ -1114,7 +1115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848654, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4756868135230848755, guid: d5b5358168e9c3a4f935547a91c3ed0a, type: 3}
       propertyPath: m_RootOrder

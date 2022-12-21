@@ -125,7 +125,7 @@ public class NetworkInteraction : NetworkManager
     public override void OnClientSceneChanged()
     {
         Debug.Log("NetworkInteraction:OnClientSceneChanged");
-        if(SceneManager.GetActiveScene().name == "Island") {
+        if(SceneManager.GetActiveScene().name == "NewIsland") {
             isPlaying = true;
 
             if (!NetworkClient.ready) NetworkClient.Ready();
@@ -141,7 +141,7 @@ public class NetworkInteraction : NetworkManager
 
     public override void OnServerSceneChanged(string sceneName)
     {
-        if(sceneName == "Island") {
+        if(sceneName == "NewIsland") {
             Debug.Log($"The game is true");
             maxConnections = NetworkServer.connections.Count; // NOTE: not to connect new players 
             _playerInfos = new List<PlayerInfo>(maxConnections);

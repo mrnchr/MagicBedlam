@@ -130,6 +130,7 @@ public class Telekinesis : NetworkBehaviour
     [Server]
     private void MagicTransition() {
         _objectRigidbody.useGravity = !_isTook;
+        _objectRigidbody.isKinematic = false;
     }
 
     [Command] 
