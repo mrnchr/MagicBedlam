@@ -166,10 +166,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f2a51ca3b1b2345920f8b14799a414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   _jumpMultiplier: 1
   _delay: 0.5
+  _canEdit: 0
+  _isPrepared: 0
 --- !u!54 &3448624730485012990
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -199,7 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   target: {fileID: 3448624730485012990}
   clientAuthority: 0
   syncVelocity: 1
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   clientAuthority: 0
   sendRate: 30
   bufferTimeMultiplier: 2

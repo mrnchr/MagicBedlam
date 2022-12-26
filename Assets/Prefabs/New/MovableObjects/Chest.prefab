@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8717035961532756104}
   - component: {fileID: 2584858431869978659}
   - component: {fileID: 1092216718442770057}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cylinder.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   target: {fileID: 8180962553657147396}
   clientAuthority: 0
   syncVelocity: 1
@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   clientAuthority: 0
   sendRate: 30
   bufferTimeMultiplier: 2
@@ -422,7 +422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   isThrowing: 0
   owner: {fileID: 0}
   _selfEmission: {fileID: 0}

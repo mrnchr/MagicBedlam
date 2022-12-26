@@ -211,6 +211,7 @@ public class Telekinesis : NetworkBehaviour
         while((_tookObjectPosition - _movableObject.transform.localPosition).sqrMagnitude > Mathf.Pow(_errorRate, 2))
         {
             _movableObject.transform.localPosition = Vector3.Lerp(_movableObject.transform.localPosition, _tookObjectPosition, procent);
+
             procent += 1 / _attractionTime * Time.fixedDeltaTime;
             yield return null;
             if(!_isTook)

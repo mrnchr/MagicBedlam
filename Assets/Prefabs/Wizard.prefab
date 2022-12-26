@@ -538,7 +538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   _limitTelekinesis: 5
   _attractionTime: 0.5
   _throwingPower: 8
@@ -567,7 +567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   _ownMesh: {fileID: 7377600309952258333}
 --- !u!114 &4442404839571110238
 MonoBehaviour:
@@ -582,7 +582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   _fakeCamera: {fileID: 2963281824028277622}
   _rb: {fileID: 8199762328769533900}
   _anim: {fileID: 4888776426488633618}
@@ -634,14 +634,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   target: {fileID: 8199762328769533900}
   clientAuthority: 0
   syncVelocity: 1
   clearVelocity: 0
   velocitySensitivity: 0.1
   syncAngularVelocity: 1
-  clearAngularVelocity: 0
+  clearAngularVelocity: 1
   angularVelocitySensitivity: 0.1
 --- !u!114 &4908205347895728065
 MonoBehaviour:
@@ -656,7 +656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   clientAuthority: 0
   sendRate: 30
   bufferTimeMultiplier: 2
@@ -707,7 +707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.01
+  syncInterval: 0.1
   clientAuthority: 0
   animator: {fileID: 4888776426488633618}
 --- !u!1 &2458258060176379990
