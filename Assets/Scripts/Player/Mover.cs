@@ -17,8 +17,8 @@ public class Mover : NetworkBehaviour
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private Animator _anim;
     [SerializeField] private Transform _jumpChecker;
-    [SyncVar] [SerializeField] private LayerMask _jumpMask;
-    [SyncVar] [SerializeField] private LayerMask _floorMask;
+    [SerializeField] private LayerMask _jumpMask;
+    [SerializeField] private LayerMask _floorMask;
     [SyncVar] [SerializeField] private float _speed;
     [SyncVar] [SerializeField] private float _swimSpeed;
     [SyncVar] [SerializeField] private float _jumpForce;
@@ -200,7 +200,7 @@ public class Mover : NetworkBehaviour
         if(NetworkClient.active)
             CmdRotate(direction);
 
-        transform.Rotate(new Vector3(0, direction.x * _mouseSensitivity.x, 0));
+        //transform.Rotate(new Vector3(0, direction.x * _mouseSensitivity.x, 0));
 
         xRot -= direction.y * _mouseSensitivity.y;
         xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);

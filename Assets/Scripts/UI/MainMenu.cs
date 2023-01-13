@@ -82,6 +82,6 @@ public class MainMenu : MonoBehaviour
 
     [Server]
     public void PlayGame() {
-        NetworkInteraction.Instance.ServerChangeScene("Island");
+        NetworkInteraction.Instance.ServerChangeScene("NewIsland");
     }
 }
