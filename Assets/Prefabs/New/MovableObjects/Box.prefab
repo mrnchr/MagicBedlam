@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 4534441252891599355}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.36, y: 0.36, z: 0.36}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7290949844688982754}
@@ -198,6 +198,7 @@ MonoBehaviour:
   syncInterval: 0.1
   isThrowing: 0
   owner: {fileID: 0}
+  _selfEmission: {fileID: 0}
 --- !u!65 &2623648849486800009
 BoxCollider:
   m_ObjectHideFlags: 0
