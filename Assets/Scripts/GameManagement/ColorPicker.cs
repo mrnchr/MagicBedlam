@@ -2,41 +2,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class ColorPicker : NetworkBehaviour 
+namespace MagicBedlam
 {
-    #region Singleton
-    static private ColorPicker _instance;
+    /// <summary>
+    /// Distribute colors to players
+    /// </summary>
+    public class ColorPicker
+    {
+        protected List<Color> _availableColors;
 
-    static public ColorPicker Instance {
-        get {
-            return _instance;
+        public ColorPicker()
+        {
+            _availableColors = new List<Color>();
+
+            Color[] colors = GameData.singleton.GetAllColors();
+            colors.CopyTo<Color>(_availableColors);
+        }
+
+        /// <summary>
+        ///     Pick random color from player color array
+        /// </summary>
+        /// <returns></returns>
+        public Color PickColor()
+        {
+            Color endColor = _availableColors[Random.Range(0, _availableColors.Count)];
+            _availableColors.Remove(endColor);
+
+            return endColor;
         }
     }
-    #endregion
-
-    private List<Color> _currentColor;
-
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
-        }
-        _instance = this;
-
-        _currentColor = new List<Color>();
-    }
-
-    public override void OnStartServer() {
-        Color[] colors = GameData.Instance.GetAllColors();
-        colors.CopyTo<Color>(_currentColor);
-    }
-
-    public Color PickColor() {
-        Color endColor = _currentColor[Random.Range(0, _currentColor.Count)];
-        _currentColor.Remove(endColor);
-
-        return endColor;
-    }
-
 }

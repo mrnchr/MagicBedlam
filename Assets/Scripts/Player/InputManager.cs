@@ -2,71 +2,112 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+namespace MagicBedlam
 {
-    #region Singleton
-    static private InputManager _instance;
+    /// <summary>
+    /// Process input data
+    /// </summary>
+    public class InputManager : MonoBehaviour
+    {
+        public static InputManager singleton { get; protected set; }
 
-    static public InputManager Instance {
-        get {
-            return _instance;
+        protected Vector2 _inputMouse;
+        protected Vector3 _inputMovement;
+        protected Mover _mover;
+        protected Telekinesis _tl;
+        protected InputState input;
+
+        protected void Awake()
+        {
+            singleton = Singleton.Create<InputManager>(this, singleton);
+
+            Debug.Log("InputManager:Awake");
+            input = InputState.Unlock;
         }
-    }
-    #endregion
 
-    private Vector3 _inputMovement;
-    private Vector2 _inputMouse;
-    private Mover _mover;
-    private Telekinesis _tl;
-    private bool _isPause;
+        /// <summary>
+        /// Lock any input
+        /// </summary>
+        public void LockInput() 
+        {
+            input = InputState.Lock;
 
-    public void SetMover(Mover mover) => _mover = mover;
-    public void SetTelekinesis(Telekinesis tl) => _tl = tl;
-
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
+            ResetInput();
         }
-        _instance = this;
-        Debug.Log("InputManager:Awake");
-        _isPause = false;
-    }
 
-    public void SetPause() {
-        _isPause = !_isPause;
-        GameMenu.Instance.SetPause(_isPause);
-    }
+        /// <summary>
+        ///     Set player movement script
+        /// </summary>
+        /// <param name="mover"></param>
+        public void SetMover(Mover mover) => _mover = mover;
 
-    private void Update() {
-        // NOTE: in the build in the first frames wintracker doesn't exist
-        if(WinTracker.Instance && !WinTracker.Instance.EndOfGame) {
-            if(Input.GetKeyDown(KeyCode.Escape)) {
-                SetPause();
-            }
+        // NOTE: used by button
+        /// <summary>
+        /// Set input on pause and set pause menu
+        /// </summary>
+        public void SetPause()
+        {
+            input = input == InputState.Pause ? InputState.Unlock : InputState.Pause;
 
-            if(!_isPause) {
-                MoveInput();
+            ResetInput();
 
-                _mover?.CmdMove(_inputMovement);
-                _mover?.Move(_inputMovement);
-                _mover?.Rotate(_inputMouse);
-                
-                if(Input.GetKeyDown(KeyCode.E)) {
-                    _tl?.ApplyAbility();
+            GameMenu.singleton?.SetPauseMenu(input == InputState.Pause);
+        }
+
+        /// <summary>
+        ///     Set player telekinesis script
+        /// </summary>
+        /// <param name="tl"></param>
+        public void SetTelekinesis(Telekinesis tl) => _tl = tl;
+
+        protected void MoveInput()
+        {
+            _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"));
+            _inputMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        }
+
+        protected void ResetInput() {
+            _mover?.CmdMove(Vector3.zero);
+            _mover?.Rotate(Vector3.zero);
+            _mover?.CmdRotate(Vector2.zero);
+        }
+
+        protected void Update()
+        {
+            // NOTE: in the build in the first frames wintracker doesn't exist
+            if (input != InputState.Lock)
+            {
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    SetPause();
+                }
+
+                if (input == InputState.Unlock)
+                {
+                    MoveInput();
+
+                    _mover?.CmdMove(_inputMovement);
+                    _mover?.Rotate(_inputMouse);
+                    _mover?.CmdRotate(_inputMouse);
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        _tl?.ApplyAbility();
+                    }
                 }
             }
+
+#if DEVELOPMENT_BUILD
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+                Cursor.lockState = CursorLockMode.None;
+#endif
         }
 
-        #if DEVELOPMENT_BUILD
-            if(Input.GetKeyDown(KeyCode.BackQuote))
-                Cursor.lockState = CursorLockMode.None;
-        #endif
-    }
-
-    private void MoveInput() {
-        _inputMovement = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Jump"), Input.GetAxis("Vertical"));
-        _inputMouse = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        protected enum InputState 
+        {
+            Unlock,
+            Pause,
+            Lock
+        }
     }
 }

@@ -1,87 +1,134 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using TMPro;
 using Mirror;
 
-public class MainMenu : MonoBehaviour
+namespace MagicBedlam
 {
-    #region Singleton
-    private static MainMenu _instance;
+    /// <summary>
+    /// Main menu
+    /// </summary>
+    public class MainMenu : MonoBehaviour
+    {
+        [Tooltip("Button which launches a session")]
+        [SerializeField] 
+        protected GameObject _launchGame;
+        [Tooltip("Object with text about host waiting")]
+        [SerializeField] 
+        protected GameObject _waitHost;
+        [Tooltip("Object with text about a number of connections")]
+        [SerializeField] 
+        protected TMP_Text _connected;
+        [Tooltip("Text field which changes on the pressing client button")]
+        [SerializeField] 
+        protected TMP_Text _forClientText;
+        [Tooltip("Text field which changes on the pressing host button")]
+        [SerializeField] 
+        protected TMP_Text _forHostText;
+        [Tooltip("Input field where host ip is entered")]
+        [SerializeField] 
+        protected HostIpField _hostIP;
 
-    public static MainMenu Instance {
-        get {
-            return _instance;
-        }
-    }
-    #endregion
+        [Header("Development Data")]
+        [Tooltip("Enable launch session on the start with one player")]
+        [SerializeField] 
+        protected bool _startHostAtOnce;
 
-    [SerializeField] private Button _launchGame;
-    [SerializeField] private TMP_Text _waitHost;
-    [SerializeField] private TMP_Text _connected;
-    [SerializeField] private TMP_Text _forClientText;
-    [SerializeField] private TMP_Text _forHostText;
-
-    [SerializeField] private TMP_InputField _hostIP;
-    
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
-        }
-        _instance = this;
-
-        _launchGame.gameObject.SetActive(false);
-        _waitHost.gameObject.SetActive(false);
-        _connected.gameObject.SetActive(false);
-    }
-
-    public void Exit() {
-        Application.Quit();
-    }
-
-    public void ForHost() {
-        if(!NetworkClient.active && Application.platform != RuntimePlatform.WebGLPlayer) {
-            NetworkInteraction.Instance.StartHost();
-            _forHostText.text = "Stop Host";
-
-            _launchGame.gameObject.SetActive(true);
-            _connected.gameObject.SetActive(true);
-        }
-        else if(NetworkServer.active && NetworkClient.isConnected) {
-            NetworkInteraction.Instance.StopHost();
-            _forHostText.text = "Launch Host";
-
-            _launchGame.gameObject.SetActive(false);
+        protected void Awake()
+        {
+            _launchGame.SetActive(false);
+            _waitHost.SetActive(false);
             _connected.gameObject.SetActive(false);
         }
-    }
 
-    public void ForClient() {
-        if(!NetworkClient.active) {
-            NetworkInteraction.Instance.networkAddress = _hostIP.text;
-            NetworkInteraction.Instance.StartClient();
+        protected void Start()
+        {
+            NetworkInteraction.singleton.OnClientEvent += ChangeClientMenu;
+            NetworkInteraction.singleton.OnServerEvent += ChangeConnected;
+
+            Cursor.lockState = CursorLockMode.None;
+#if UNITY_EDITOR
+            if (_startHostAtOnce)
+            {
+                ChangeHostConnection();
+                LaunchGame();
+            }
+#endif
         }
-        else {
-            NetworkInteraction.Instance.StopClient();
+
+        protected void OnDisable()
+        {
+            NetworkInteraction.singleton.OnClientEvent -= ChangeClientMenu;
+            NetworkInteraction.singleton.OnServerEvent -= ChangeConnected;
         }
-    }
 
-    public void ChangeClientMenu(bool isConnected) {
-        _forClientText.text = isConnected ? "Stop Client" : "Launch Client";
-        _waitHost.gameObject.SetActive(isConnected);
-    }
+        /// <summary>
+        /// Exit from game
+        /// </summary>
+        public void Exit()
+        {
+            Application.Quit();
+        }
 
-    [Server]
-    public void ChangeConnected() {
-        _connected.text = $"Connected: {NetworkServer.connections.Count}";
-    }
+        /// <summary>
+        /// Start or stop the host and show or hide related menu
+        /// </summary>
+        public void ChangeHostConnection()
+        {
+            if (!NetworkClient.active && Application.platform != RuntimePlatform.WebGLPlayer)
+            {
+                NetworkInteraction.singleton.StartHost();
+                _forHostText.text = "Stop Host";
 
-    [Server]
-    public void PlayGame() {
-        NetworkInteraction.Instance.ServerChangeScene("NewIsland");
+                _launchGame.SetActive(true);
+                _connected.gameObject.SetActive(true);
+            }
+            else if (NetworkServer.active && NetworkClient.isConnected)
+            {
+                NetworkInteraction.singleton.StopHost();
+                _forHostText.text = "Launch Host";
+
+                _launchGame.SetActive(false);
+                _connected.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Start or stop the client and show or hide related menu
+        /// </summary>
+        public void ChangeClientConnection()
+        {
+            if (!NetworkClient.active)
+            {
+                NetworkInteraction.singleton.networkAddress = _hostIP.Text;
+                NetworkInteraction.singleton.StartClient();
+            }
+            else
+            {
+                NetworkInteraction.singleton.StopClient();
+            }
+        }
+
+        /// <summary>
+        /// Launch the game
+        /// </summary>
+        [Server]
+        public void LaunchGame()
+        {
+            NetworkInteraction.singleton.ServerChangeScene("Castle");
+        }
+
+        protected void ChangeClientMenu()
+        {
+            _forClientText.text = NetworkClient.isConnected ? "Stop Client" : "Launch Client";
+            _waitHost.SetActive(NetworkClient.isConnected);
+        }
+
+        [Server]
+        protected void ChangeConnected()
+        {
+            Debug.Log("MainMenu:NetworkInteraction");
+            _connected.text = $"Connected: {NetworkServer.connections.Count}";
+        }
     }
 }

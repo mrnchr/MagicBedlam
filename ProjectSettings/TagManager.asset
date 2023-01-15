@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spawner
   - Water
+  - MovableObject
   layers:
   - Default
   - TransparentFX

@@ -4,226 +4,303 @@ using UnityEngine;
 using UnityEditor;
 using Mirror;
 
-public class Telekinesis : NetworkBehaviour
+namespace MagicBedlam
 {
-    [Tooltip("The object taking distance")]
-    [SyncVar] [SerializeField] private float _limitTelekinesis;
-    [SyncVar] [SerializeField] private float _attractionTime;
-    [SyncVar] [SerializeField] private float _throwingPower;
-    [Tooltip("The object position relative to the camera")]
-    [SerializeField] private Vector3 _tookObjectPosition;
-    [Tooltip("The error rate of the object location relative to Took Object Position")]
-    [SerializeField] private float _errorRate;
-    [Tooltip("The maximum distance where the player aims if there are no other objects closer")]
-    [SyncVar] [SerializeField] private float _viewDistance;
-    [Tooltip("Time for which the player can not take objects after a throwing")]
-    [SyncVar] [SerializeField] private float _coolDownTime;
-    [SyncVar] [SerializeField] private LayerMask _movableMask;
-    [SyncVar] [SerializeField] private LayerMask _allMasks;
-
-    [SyncVar(hook = nameof(WhenChangeObject))] private MovableObject _movableObject;
-    [SyncVar(hook = nameof(WhenChangeIsTook))] private bool _isTook;
-    [SyncVar] private bool _toPlayer;
-    [SyncVar] private bool _isCoolDown;
-
-    private Rigidbody _objectRigidbody; // only on the server or the host
-    private Transform _defaultParent;
-    [SerializeField] private Mover _mover; // only on the server or the host
-    [SerializeField] private NetworkAnimator _anim;
-
-    public override void OnStartLocalPlayer()
+    /// <summary>
+    /// Telekinesis abitity
+    /// </summary>
+    public class Telekinesis : NetworkBehaviour
     {
-        Debug.Log("Telekinesis:OnStartLocalPlayer");
-        InputManager.Instance.SetTelekinesis(this);
-    }
+        [Tooltip("The object taking distance")]
+        [SerializeField] protected float _limitTelekinesis;
+        [Tooltip("Time which the object flies to the player for")]
+        [SerializeField] 
+        [Range(0, 5)]
+        protected float _attractionTime;
+        [Tooltip("Power which the player throw the object with")]
+        [SerializeField] 
+        [Range(0, 20)]
+        protected float _throwingPower;
+        [Tooltip("The object position relative to the camera")]
+        [SerializeField] 
+        protected Vector3 _tookObjectPosition;
+        [Tooltip("The maximum distance where the player aims if there are no other objects closer")]
+        [SerializeField] 
+        protected float _viewDistance;
+        [Tooltip("Time for which the player can not take objects after a throwing")]
+        [SerializeField] 
+        protected float _coolDownTime;
+        [Tooltip("Objects which can be moved by telekinesis")]
+        [SerializeField] 
+        protected LayerMask _movableMask;
+        [Tooltip("Objects which can be threw other objects in")]
+        [SerializeField] 
+        protected LayerMask _allMasks;
+        [Tooltip("Own Mover component")]
+        [SerializeField] 
+        protected Mover _mover;
+        [Tooltip("Own Animator component")]
+        [SerializeField] 
+        protected NetworkAnimator _anim;
+        [SerializeField]
+        protected PlayerAudioSource _ownAudio;
 
-    public override void OnStopLocalPlayer()
-    {
-        InputManager.Instance.SetTelekinesis(null);
-    }
+        [SyncVar(hook = nameof(WhenChangeAbility))] protected Ability ability = Ability.Ready;
+        [SyncVar(hook = nameof(WhenChangeObject))] protected MovableObject _movableObject;
 
-    [Command] 
-    private void CmdApplyAbility() {
-        if(!_movableObject)
-            return;
+        protected Transform _defaultParent;
+        protected Rigidbody _objectRigidbody;
 
-        _isTook = true;
+        public void ApplyAbility()
+        {
+            if (ability == Ability.CoolDown || ability == Ability.Apply || !_movableObject)
+                return;
 
-        _defaultParent = _movableObject.transform.parent;
-        _movableObject.transform.SetParent(transform);
-        _movableObject.owner = gameObject;
-        _movableObject.gameObject.layer = 2;
-        RpcApplyAbility();
-        MagicTransition();
-        _anim.SetTrigger("Take");
-
-        _toPlayer = true;
-        StartCoroutine(Flight());
-    }
-
-    [ClientRpc]
-    private void RpcApplyAbility() {
-        if(isClientOnly) {
-            StartCoroutine(WaitApplyAbility());
+            if (ability == Ability.Hold)
+                CmdThrowObject();
+            else
+                CmdApplyAbility();
         }
-    }
 
-    private IEnumerator WaitApplyAbility() {
-        while (!_movableObject) {
-            yield return null;
+        [Server]
+        public void DropObject()
+        {
+            if (ability == Ability.CoolDown || ability == Ability.Ready) return;
+            _movableObject.transform.SetParent(_defaultParent);
+            _movableObject.ChangeLayer(6);
+            RpcThrowObject();
+
+            MagicTransition(true);
+            _anim.SetTrigger("Throw");
+
+            _movableObject.isThrowing = false;
+            _movableObject.owner = null;
+
+            // recharge enabling
+            _objectRigidbody = null;
+            _defaultParent = null;
+            _movableObject = null;
+            
+            ability = Ability.Ready;
         }
-        
-        _defaultParent = _movableObject.transform.parent;
-        _movableObject.transform.SetParent(transform);
-    }
 
-    public void ApplyAbility() {
-        if(_isCoolDown || _toPlayer || !_movableObject) 
-            return;
+        [Server]
+        protected void CheckAim()
+        {
+            if (ability == Ability.Ready)
+            {
+                RaycastHit hit;
 
-        if(_isTook)
-            CmdThrowObject();
-        else
-            CmdApplyAbility();
-    }
-
-    private void WhenChangeIsTook(bool oldValue, bool newValue) {
-        if(newValue && isLocalPlayer) {
-            Flame(_movableObject, false);
-        }
-    }
-    [ServerCallback]
-    private void FixedUpdate() {
-        CheckAim();
-        if(_isTook) {
-            StartCoroutine(Flight());
-        }
-    }
-
-    // TODO: to check
-    private void CheckAim() {
-        if(!_isTook && !_isCoolDown) {
-            RaycastHit hit;
-
-            if(Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _limitTelekinesis, _movableMask)) {
-                if((!_movableObject || _movableObject != hit.transform) && !hit.transform.GetComponent<MovableObject>().owner) {
-                    _movableObject = hit.transform.GetComponent<MovableObject>();
-                    _objectRigidbody = hit.rigidbody;
+                if (Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _limitTelekinesis, _movableMask))
+                {
+                    MovableObject movable = hit.transform.GetComponent<MovableObject>();
+                    if ((!_movableObject || _movableObject != hit.transform) && !movable.owner)
+                    {
+                        _movableObject = movable;
+                        _objectRigidbody = hit.rigidbody;
+                    }
+                }
+                else
+                {
+                    _movableObject = null;
+                    _objectRigidbody = null;
                 }
             }
-            else {
-                _movableObject = null;
-                _objectRigidbody = null;
+        }
+
+        [Command]
+        protected void CmdApplyAbility()
+        {
+            if (!_movableObject)
+                return;
+
+            ability = Ability.Apply;
+
+            _defaultParent = _movableObject.transform.parent;
+            _movableObject.transform.SetParent(transform);
+            _movableObject.owner = gameObject;
+
+            // NOTE: changing layer is necessary to when throwing the object not to aim at it
+            _movableObject.ChangeLayer(2);
+            RpcApplyAbility();
+            MagicTransition(false);
+            _anim.SetTrigger("Take");
+            _ownAudio.RpcPlay(PlayerSound.Pick);
+
+            StartCoroutine(Flight());
+        }
+
+        [Command]
+        protected void CmdThrowObject()
+        {
+            // if client called command before several times in a row object
+            // may be took for the client but not for the server
+            if (ability != Ability.Hold)
+                return;
+
+            // direction of throw
+            RaycastHit hit;
+            Vector3 aimPos;
+
+            aimPos = Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _viewDistance, _allMasks, QueryTriggerInteraction.Ignore) ? hit.point
+                : _mover.FakeCamera.position + _mover.FakeCamera.forward * _viewDistance;
+
+            _movableObject.transform.SetParent(_defaultParent);
+            _movableObject.ChangeLayer(6);
+
+            RpcThrowObject();
+
+            MagicTransition(true);
+            _anim.SetTrigger("Throw");
+            _ownAudio.RpcPlay(PlayerSound.Throw);
+
+            _objectRigidbody.AddForce((aimPos - _movableObject.transform.position).normalized * _throwingPower, ForceMode.Impulse);
+            _movableObject.isThrowing = true;
+
+            // recharge enabling
+            _objectRigidbody = null;
+            _defaultParent = null;
+            _movableObject = null;
+            StartCoroutine(CoolDown());
+        }
+
+        [Server]
+        protected IEnumerator CoolDown()
+        {
+            ability = Ability.CoolDown;
+            yield return new WaitForSeconds(_coolDownTime);
+            ability = Ability.Ready;
+        }
+
+        protected IEnumerator WaitForUpdateObject()
+        {
+            while(ability == Ability.Hold)
+            {
+                _movableObject.transform.localPosition = _tookObjectPosition;
+                yield return new WaitForSeconds(0.1f);
             }
         }
-    }
 
-    private void WhenChangeObject(MovableObject oldValue, MovableObject newValue) {
-        if(isLocalPlayer) {
-            Flame(oldValue, false);
-            Flame(newValue, true);
+        [Server]
+        protected IEnumerator Flight()
+        {
+            float procent = 0;
+            Vector3 startPos = _movableObject.transform.localPosition;
+
+            while ((_movableObject.transform.localPosition - _tookObjectPosition).sqrMagnitude > Mathf.Pow(0.01f, 2))
+            {
+                _movableObject.transform.localPosition = Vector3.Lerp(startPos, _tookObjectPosition, procent);
+                procent += 1 / _attractionTime * Time.deltaTime;
+                yield return null;
+                if (ability != Ability.Apply)
+                    break;
+            }
+
+            ability = Ability.Hold;
+            StartCoroutine(WaitForUpdateObject());
         }
-    }
-    
-    private void Flame(MovableObject movableObj, bool highlighted) => movableObj?.Glow(highlighted);
 
-    [Server]
-    private void MagicTransition() {
-        _objectRigidbody.useGravity = !_isTook;
-        _objectRigidbody.isKinematic = false;
-    }
+        [Server]
+        protected void MagicTransition(bool hasPhysics)
+        {
+            _objectRigidbody.useGravity = hasPhysics;
+            _objectRigidbody.isKinematic = !hasPhysics;
+        }
 
-    [Command] 
-    private void CmdEnableFlight() {
-        StartCoroutine(Flight());
-    }
+        public override void OnStartLocalPlayer()
+        {
+            Debug.Log("Telekinesis:OnStartLocalPlayer");
+            InputManager.singleton.SetTelekinesis(this);
+        }
 
-    [Command] 
-    private void CmdThrowObject() {
-        if(!_movableObject)
-            return;
+        public override void OnStopLocalPlayer()
+        {
+            InputManager.singleton.SetTelekinesis(null);
+        }
 
-        // direction of throw
-        RaycastHit hit;
-        Vector3 aimPos;
+        public override void OnStartServer()
+        {
+            StartCoroutine(WaitForCheckAim());
+        }
 
-        aimPos = Physics.Raycast(_mover.FakeCamera.position, _mover.FakeCamera.forward, out hit, _viewDistance, _allMasks, QueryTriggerInteraction.Ignore) ? hit.point 
-            : _mover.FakeCamera.position + _mover.FakeCamera.forward * _viewDistance;
+        [ClientRpc]
+        protected void RpcApplyAbility()
+        {
+            if (isClientOnly)
+            {
+                StartCoroutine(WaitApplyAbility());
+            }
+        }
 
-        _isTook = false;
-        _movableObject.transform.SetParent(_defaultParent);
-        _movableObject.gameObject.layer = 6;
+        [ClientRpc]
+        protected void RpcThrowObject()
+        {
+            if (isClientOnly)
+            {
+                StartCoroutine(WaitThrowObject());
+            }
+        }
 
-        RpcThrowObject();
+        protected IEnumerator WaitApplyAbility()
+        {
+            while (!_movableObject)
+            {
+                yield return null;
+            }
 
-        MagicTransition();
-        _anim.SetTrigger("Throw");
+            _defaultParent = _movableObject.transform.parent;
+            _movableObject.transform.SetParent(transform);
+        }
 
-        _objectRigidbody.AddForce((aimPos - _movableObject.transform.position).normalized * _throwingPower, ForceMode.Impulse);
-        _movableObject.isThrowing = true;
-
-        // recharge enabling
-        _objectRigidbody = null;
-        _defaultParent = null;
-        _movableObject = null;
-        StartCoroutine(CoolDown());
-    }
-
-    private IEnumerator WaitThrowObject() {
-        while (!_movableObject) {
-            yield return null;
+        [Server]
+        protected IEnumerator WaitForCheckAim()
+        {
+            while (NetworkServer.active)
+            {
+                CheckAim();
+                yield return new WaitForSeconds(0.1f);
+            }
         }
         
-        _movableObject.transform.SetParent(_defaultParent);
-        _defaultParent = null;
-    }
-
-    [Server]
-    public void DropObject() {
-        if(!_isTook) return;
-        _isTook = false;
-        _movableObject.transform.SetParent(_defaultParent);
-        RpcThrowObject();
-
-        MagicTransition();
-
-        _movableObject.isThrowing = false;
-        _movableObject.owner = null;
-
-        // recharge enabling
-        _objectRigidbody = null;
-        _defaultParent = null;
-        _movableObject = null;
-    }
-
-    [ClientRpc]
-    private void RpcThrowObject() {
-        if(isClientOnly) {
-            StartCoroutine(WaitThrowObject());
-        }
-
-    }
-
-    [Server]
-    private IEnumerator Flight() {
-        float procent = 0;
-
-        while((_tookObjectPosition - _movableObject.transform.localPosition).sqrMagnitude > Mathf.Pow(_errorRate, 2))
+        protected IEnumerator WaitThrowObject()
         {
-            _movableObject.transform.localPosition = Vector3.Lerp(_movableObject.transform.localPosition, _tookObjectPosition, procent);
+            while (!_movableObject)
+            {
+                yield return null;
+            }
 
-            procent += 1 / _attractionTime * Time.fixedDeltaTime;
-            yield return null;
-            if(!_isTook)
-                yield break;
+            _movableObject.transform.SetParent(_defaultParent);
+            _defaultParent = null;
         }
 
-        _toPlayer = false;
-    }
+        protected void WhenChangeAbility(Ability oldValue, Ability newValue)
+        {
+            if (newValue == Ability.Apply && isLocalPlayer)
+            {
+                _movableObject.Glow(false);
+            }
+        }
 
-    private IEnumerator CoolDown() {
-        _isCoolDown = true;
-        yield return new WaitForSeconds(_coolDownTime);
-        _isCoolDown = false;
+        protected void WhenChangeObject(MovableObject oldValue, MovableObject newValue)
+        {
+            if (isLocalPlayer)
+            {
+                oldValue?.Glow(false);
+                newValue?.Glow(true);
+            }
+        }
+
+        protected void Reset() {
+            TryGetComponent<Mover>(out _mover);
+            TryGetComponent<NetworkAnimator>(out _anim);
+        }
+
+        protected enum Ability
+        {
+            CoolDown,
+            Ready,
+            Apply,
+            Hold
+        }
     }
 }

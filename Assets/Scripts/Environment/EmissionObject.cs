@@ -1,28 +1,50 @@
+using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
-public class EmissionObject : MonoBehaviour {
-    [SerializeField] private MeshRenderer[] _emissionMeshs;
-    [SerializeField] private Color[] _emissionColors;
+namespace MagicBedlam
+{
+    /// <summary>
+    ///     Store meshes which emission and them emission color
+    ///     and restore colors after them changes
+    /// </summary>
+    public class EmissionObject : MonoBehaviour
+    {
+        [Tooltip("Emission meshes")]
+        [SerializeField]
+        protected MeshRenderer[] _meshes;
 
-    private void Start() {
-        _emissionColors = new Color[_emissionMeshs.Length];
+        protected Color[] _colors;
 
-        for (int i = 0; i < _emissionColors.Length; i++) {
-            _emissionColors[i] = _emissionMeshs[i].material.GetColor("_EmissionColor");
-        }
-    }
+        protected void Start()
+        {
+            _colors = new Color[_meshes.Length];
 
-    public bool TryGetColor(MeshRenderer match, out Color origin) {
-        origin = Color.black;
-
-        for (int i = 0; i < _emissionColors.Length; i++) {
-            if(match == _emissionMeshs[i]) {
-                origin = _emissionColors[i];
-                return true;
+            for (int i = 0; i < _colors.Length; i++)
+            {
+                _colors[i] = _meshes[i].material.GetColor("_EmissionColor");
             }
         }
 
-        return false;
+        /// <summary>
+        ///     Find the starting color of the given object if it is stored          
+        /// </summary>
+        /// <param name="match"></param>
+        /// <param name="origin"></param>
+        /// <returns></returns>
+        public bool TryFindColor(MeshRenderer match, out Color origin)
+        {
+            origin = Color.black;
+
+            for (int i = 0; i < _colors.Length; i++)
+            {
+                if (match == _meshes[i])
+                {
+                    origin = _colors[i];
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

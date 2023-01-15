@@ -1,19 +1,9 @@
 fileFormatVersion: 2
-guid: ec885ba55adde8f49b76256b16aa40f3
+guid: 041a6cef6df1c9f47adc1aa66f871c9a
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: ChestMat
-    second: {fileID: 2100000, guid: 76b775560e94e32459a330b4fe6f921e, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: MetalChestMat
-    second: {fileID: 2100000, guid: 7f2ac142556cccb47a5387291753b061, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -76,7 +66,7 @@ ModelImporter:
     secondaryUVMinLightmapResolution: 40
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
-    useFileScale: 0
+    useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0

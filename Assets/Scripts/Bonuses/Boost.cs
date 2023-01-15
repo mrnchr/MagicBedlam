@@ -1,79 +1,72 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-[ExecuteInEditMode]
-public class Boost : MonoBehaviour
+namespace MagicBedlam
 {
+    /// <summary>
+    ///     Representation a boost object
+    /// </summary>
+    [ExecuteInEditMode]
+    public class Boost : MonoBehaviour
+    {
+        [Tooltip("The player jump force multiplier")]
+        [SerializeField]
+        [Range(1, 5)]
+        protected float _jumpMultiplier;
+        [SerializeField]
+        protected BoostAudioSource _ownAudio;
 
-    [SerializeField] private float _jumpMultiplier;
-    [SerializeField] private float _delay;
+        [Header("EditMode Data")]
+        [Tooltip("Set the object to state when the player stay on it")]
+        [SerializeField] 
+        protected bool _isPrepared;
 
-    [Header("Test Data")]
-    [SerializeField] private bool _canEdit;
-    [SerializeField] private bool _isPrepared;
-    private Vector3 _startPosition; 
+        protected float _delay = 0.5f;
+        protected bool _isLastPrepared;
+        protected int _numOfPlayers;
+        protected Vector3 _startPos;
 
+        protected void Awake() 
+        {
+            _startPos = transform.position;
+        }
 
-    private int _numOfPlayers;
-    private bool isGoneOut;
+        protected void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player") && !other.isTrigger)
+            {
+                other.GetComponent<Mover>().JumpMultiplier = _jumpMultiplier;
+            }
+        }
+
+        protected void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player") && !other.isTrigger)
+            {
+                other.GetComponent<Mover>().JumpMultiplier = 1;
+                
+                if(other.attachedRigidbody.velocity.y > 6)
+                {
+                    _ownAudio.RpcPlay();
+                }
+            }
+        }
 
 #if UNITY_EDITOR
 
-    private void Update() {
-        if(!_canEdit) {
-            _startPosition = transform.position;
-        }
-        else if(_isPrepared) {
-            transform.position = _startPosition - Vector3.up * 0.19f;
-        }
-        else {
-            transform.position = _startPosition;
-        }
-    }
-
-#endif
-
-    [ServerCallback]
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Player") && !other.isTrigger && !isGoneOut) {
-            other.GetComponent<Mover>().JumpMultiplier = _jumpMultiplier;
-            _numOfPlayers++;
-            if(_numOfPlayers == 1) {
-                transform.position -= Vector3.up * 0.19f;
+        protected void Update()
+        {
+            if (!UnityEditor.EditorApplication.isPlaying)
+            {
+                if (_isPrepared != _isLastPrepared)
+                {
+                    transform.position += Vector3.up * 0.19f * (_isPrepared ? -1 : 1);
+                }
+                _isLastPrepared = _isPrepared;
             }
         }
-    }
 
-    [ServerCallback]
-    private void OnTriggerExit(Collider other) {
-        if(other.CompareTag("Player") && !other.isTrigger && !isGoneOut) {
-            other.GetComponent<Mover>().JumpMultiplier = 1;
-            _numOfPlayers--;
-            if(_numOfPlayers == 0) {
-                StartCoroutine(WaitForBoost(other.attachedRigidbody.velocity.y > 0.1f));
-                StartCoroutine(WaitForDelay());
-            }   
-        }
-    }
-
-    [ServerCallback]
-    private IEnumerator WaitForBoost(bool isJump) {
-        if(isJump) {
-            transform.position += Vector3.up * 0.39f;
-            yield return new WaitForSeconds(_delay);
-            transform.position -= Vector3.up * 0.2f;
-        }
-        else {
-            transform.position += Vector3.up * 0.19f;
-        }
-    }
-
-    [ServerCallback]
-    private IEnumerator WaitForDelay() {
-        isGoneOut = true;
-        yield return new WaitForSeconds(_delay);
-        isGoneOut = false;
+#endif
     }
 }

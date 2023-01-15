@@ -11,14 +11,13 @@ GameObject:
   - component: {fileID: 4756868135230848755}
   - component: {fileID: 4756868135230848652}
   - component: {fileID: 4756868135230848653}
-  - component: {fileID: 7235347105955383339}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4756868135230848755
 Transform:
   m_ObjectHideFlags: 0
@@ -868,7 +867,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 80
+      scalar: 40
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -3832,16 +3831,16 @@ ParticleSystem:
       emitProbability: 1
   LightsModule:
     enabled: 1
-    ratio: 1
+    ratio: 0.5
     light: {fileID: 7011072618716646770, guid: c958b48cfe1395f43a909391ef7a6478, type: 3}
     randomDistribution: 0
-    color: 1
+    color: 0
     range: 1
     intensity: 1
     rangeCurve:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 20
+      minMaxState: 0
+      scalar: 10
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3893,7 +3892,7 @@ ParticleSystem:
         m_RotationOrder: 4
     intensityCurve:
       serializedVersion: 2
-      minMaxState: 1
+      minMaxState: 0
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -3944,7 +3943,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    maxLights: 60
+    maxLights: 40
   TrailModule:
     enabled: 0
     mode: 0
@@ -4831,15 +4830,3 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &7235347105955383339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4756868135230848654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa1f16c1e230f14c96f7d534e0c20bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

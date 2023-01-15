@@ -3,31 +3,29 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ColorChanger : MonoBehaviour
+namespace MagicBedlam
 {
-    #region Singleton
-    static private ColorChanger _instance;
+    /// <summary>
+    /// Changing local player interface color
+    /// </summary>
+    public class ColorChanger : MonoBehaviour
+    {
+        public static ColorChanger singleton { get; protected set; }
+        [Tooltip("Text field with time")]
+        [SerializeField] 
+        protected TMP_Text _timeText;
+        [Tooltip("The player cursor")]
+        [SerializeField] 
+        protected Image _cursor;
 
-    static public ColorChanger Instance {
-        get {
-            return _instance;
+        protected void Awake()
+        {
+            singleton = Singleton.Create<ColorChanger>(this, singleton);
         }
-    }
 
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
+        public void SetColor(Color menuColor)
+        {
+            _timeText.color = _cursor.color = menuColor;
         }
-        _instance = this;
-    }
-    #endregion
-
-    [SerializeField] private TMP_Text _timeText;
-    [SerializeField] private Image _cursor;
-
-    public void SetColor(Color menuColor) {
-        _timeText.color = _cursor.color = menuColor;
     }
 }

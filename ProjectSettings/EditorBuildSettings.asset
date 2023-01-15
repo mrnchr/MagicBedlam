@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 656c7dddffcf81d44a5a05722074c4f3
   - enabled: 1
-    path: Assets/Scenes/NewIsland.unity
-    guid: 3c63551b6b9ffae4994b08ced4c6f8ed
+    path: Assets/Scenes/Castle.unity
+    guid: 6b7cfcbfecb24d1468cbcec4d5bf6e23
   m_configObjects: {}

@@ -1,61 +1,69 @@
 using UnityEngine;
 using Mirror;
 
-public class GameMenu : MonoBehaviour 
+namespace MagicBedlam
 {
-    #region Singleton
-    static private GameMenu _instance;
+    /// <summary>
+    /// Interaction game and pause menu
+    /// </summary>
+    public class GameMenu : MonoBehaviour
+    {
+        public static GameMenu singleton { get; protected set; }
 
-    static public GameMenu Instance {
-        get {
-            return _instance;
+        [Tooltip("Play menu canvas")]
+        [SerializeField] 
+        protected GameObject _playMenu;
+        [Tooltip("Pause menu canvas")]
+        [SerializeField] 
+        protected GameObject _pauseMenu;
+        [Tooltip("Win menu canvas")]
+        [SerializeField] 
+        protected GameObject _winMenu;
+        [Tooltip("The table of information about player")]
+        [SerializeField] 
+        protected RectTransform _playerTable;
+
+        [Tooltip("Object displayed when win occured since time is out")]
+        [SerializeField]
+        protected GameObject _timeIsOut;
+
+        public void Exit()
+        {
+            NetworkInteraction.singleton.Disconnect();
         }
-    }
 
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
+        public void SetPauseMenu(bool isPause)
+        {
+            _playMenu.SetActive(!isPause);
+            _pauseMenu.SetActive(isPause);
+
+            Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
         }
-        _instance = this;
-    }
-    #endregion
 
-    [SerializeField] private GameObject _playMenu;
-    [SerializeField] private GameObject _pauseMenu;
-    [SerializeField] private GameObject _winMenu;
-    [SerializeField] private RectTransform _playerTable;
+        public void SetWinMenu(bool isOutOfTime)
+        {
+            _playMenu.SetActive(false);
+            _pauseMenu.SetActive(false);
+            _winMenu.SetActive(true);
+            _timeIsOut.SetActive(isOutOfTime);
 
-    private void Start() {
-        Cursor.lockState = CursorLockMode.Locked;
-    }
+            Cursor.lockState = CursorLockMode.None;
 
-    public void SetPause(bool isPause) {
-        _playMenu.SetActive(!isPause);
-        _pauseMenu.SetActive(isPause);
-        
-        Cursor.lockState = isPause ? CursorLockMode.None : CursorLockMode.Locked;
-    }
+            _playerTable.SetParent(_winMenu.transform);
+            _playerTable.anchoredPosition = new Vector2(0.5f, 0.5f);
+            _playerTable.pivot = new Vector2(0.5f, 0.5f);
+            _playerTable.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        }
 
-    public void SetWinMenu(bool outOfTime) {
-        _playMenu.SetActive(false);
-        _pauseMenu.SetActive(false);
-        _winMenu.SetActive(true);
+        protected void Awake()
+        {
+            singleton = Singleton.Create<GameMenu>(this, singleton);
+        }
 
-        Cursor.lockState = CursorLockMode.Locked;
-
-        _playerTable.SetParent(_winMenu.transform);
-        _playerTable.anchoredPosition = new Vector2(0.5f, 0.5f);
-        _playerTable.pivot = new Vector2(0.5f, 0.5f);
-        _playerTable.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
-    }
-
-    public void Exit() {
-        NetworkInteraction.Instance.Disconnect();
-    }
-
-    private void OnDestroy() {
-        Cursor.lockState = CursorLockMode.None;
+        protected void Start()
+        {
+            Debug.Log("GameMenu:Start");
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 }

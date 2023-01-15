@@ -790,7 +790,7 @@ namespace Mirror
         // OnGUI allocates even if it does nothing. avoid in release.
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         // debug ///////////////////////////////////////////////////////////////
-        protected virtual void OnGUI()
+        /* protected virtual void OnGUI()
         {
             if (!showOverlay) return;
 
@@ -825,7 +825,7 @@ namespace Mirror
                 GUILayout.EndArea();
                 GUI.color = Color.white;
             }
-        }
+        } */
 
         protected virtual void DrawGizmos(SortedList<double, NTSnapshot> buffer)
         {

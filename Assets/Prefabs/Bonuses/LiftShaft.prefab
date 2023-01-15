@@ -172,12 +172,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a68a4f504dc1d1e40864dcf5022b5c83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
+  _speed: 3
+  _delay: 1
   _bottom: {fileID: 2242424499051447390}
   _top: {fileID: 2242424497493657962}
-  _speed: 5
-  _delay: 1
   _rb: {fileID: 2242424498206346394}
 --- !u!1 &2242424499051447389
 GameObject:

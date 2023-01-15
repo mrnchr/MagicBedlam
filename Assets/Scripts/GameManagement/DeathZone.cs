@@ -1,14 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class DeathZone : MonoBehaviour
+namespace MagicBedlam
 {
-    [ServerCallback]
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Player")) {
-            WinTracker.Instance.PlayerDeath(other.GetComponent<Player>(), null);
+    /// <summary>
+    /// Area which players die in
+    /// </summary>
+    public class DeathZone : MonoBehaviour
+    {
+        [Server]
+        protected void Kill(Player killed)
+        {
+            killed.Die();
+            Debug.Log($"The {GameData.singleton.GetColorName(killed.OwnColor).ToUpper()} player killed himself");
+        }
+        
+        [ServerCallback]
+        protected void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                Kill(other.GetComponent<Player>());
+            }
         }
     }
 }

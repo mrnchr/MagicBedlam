@@ -4,81 +4,95 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public class WinTracker : NetworkBehaviour {
+namespace MagicBedlam
+{
+    /// <summary>
+    /// Keep track of win event
+    /// </summary>
+    public class WinTracker : NetworkBehaviour
+    {
+        public static WinTracker singleton { get; protected set; }
 
-    #region Singleton
-    static private WinTracker _instance;
+        [SerializeField] protected AudioSource _musicAudio;
+        [SerializeField] protected AudioClip _loseAudio;
+        [SerializeField] protected AudioClip _winAudio;
 
-    static public WinTracker Instance {
-        get {
-            return _instance;
-        }
-    }
+        // NOTE: used that win function by time wouldn't be called several times 
+        [SyncVar] protected bool _endOfGame;
 
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
-        }
-        _instance = this;
-
-        Debug.Log("WinTracker:Awake");
-    }
-    #endregion
-
-    // NOTE: used that win function by time wouldn't be called several times 
-    [SyncVar] private bool _endOfGame;
-
-    public bool EndOfGame {
-        get {
-            return _endOfGame;
-        }
-    }
-
-    // NOTE: It's needed to process the order of operations and keep track of win event 
-    [Server]
-    public void PlayerDeath(Player killed, Player killer) {
-        if(!killed) {
-            Debug.LogError("Don't try to call player death without the killed player");
+        public bool EndOfGame
+        {
+            get
+            {
+                return _endOfGame;
+            }
         }
 
-        killed.Dead();
+        protected void Awake()
+        {
+            singleton = Singleton.Create<WinTracker>(this, singleton);
 
-        if(killer == null) {
-            Debug.Log($"The {GameData.Instance.GetColorName(killed.OwnColor).ToUpper()} player killed himself");
+            Debug.Log("WinTracker:Awake");
         }
-        if(killer != null) {
-            Debug.Log($"The {GameData.Instance.GetColorName(killed.OwnColor).ToUpper()} player was killed by the {GameData.Instance.GetColorName(killer.OwnColor).ToUpper()} player");
 
-            int newScores = killer.IncrementScores();
+        // NOTE: It's needed to process the order of operations and keep track of win event 
+        /// <summary>
+        ///     Give scores to the player and check win
+        /// </summary>
+        /// <param name="receiver"></param>
+        [Server]
+        public void GiveScores(Player receiver)
+        {
+            int newScores = receiver.IncrementScores();
 
-            Debug.Log($"Now the {GameData.Instance.GetColorName(killer.OwnColor).ToUpper()} player has {newScores} scores");
-            
-            if(newScores >= GameData.Instance.WinScores) {
+            if (newScores >= GameData.singleton.WinScores)
+            {
                 Win(false);
             }
         }
+        
+        [ClientRpc]
+        protected void RpcSetWin(bool isOutOfTime)
+        {
+            InputManager.singleton.LockInput();
+            GameMenu.singleton?.SetWinMenu(isOutOfTime);
+
+            _musicAudio.Stop();
+            _musicAudio.loop = false;
+            _musicAudio.playOnAwake = false;
+            _musicAudio.volume = 1;
+            if(Player.localPlayer.OwnColor == TableKeeper.singleton.GetWinner()) 
+            {
+                _musicAudio.clip = _winAudio;
+            }
+            else 
+            {
+                _musicAudio.clip = _loseAudio;
+            }
+
+            _musicAudio.Play();
+        }
+
+        [Server]
+        protected IEnumerator WaitForEndOfGame()
+        {
+            yield return new WaitForSeconds(7);
+            NetworkInteraction.singleton.Disconnect();
+        }
+
+        /// <summary>
+        ///     Call win menu on the clients and start the countdown to exit
+        /// </summary>
+        /// <param name="outOfTime">Whether game time is out of or not</param>
+        [Server]
+        public void Win(bool isOutOfTime)
+        {
+            if (_endOfGame)
+                return;
+
+            _endOfGame = true;
+            RpcSetWin(isOutOfTime);
+            StartCoroutine(WaitForEndOfGame());
+        }
     }
-
-    [Server]
-    public void Win(bool outOfTime) {
-        Debug.Log(outOfTime ? "Time is up" : "Win!");
-
-        _endOfGame = true;
-        RpcSetWin(outOfTime);
-        StartCoroutine(WaitForEndOfGame());
-    }
-
-    [ClientRpc] 
-    private void RpcSetWin(bool outOfTime) {
-        GameMenu.Instance.SetWinMenu(outOfTime);
-    }
-
-    [Server] 
-    private IEnumerator WaitForEndOfGame() {
-        yield return new WaitForSeconds(5);
-        NetworkInteraction.Instance.Disconnect();
-    }
-
 }

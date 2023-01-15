@@ -3,92 +3,105 @@ using System.Collections;
 using UnityEngine;
 using Mirror;
 
-public class Spawner : NetworkBehaviour 
+namespace MagicBedlam
 {
-    #region Singleton
-    
-    static private Spawner _instance;
+    /// <summary>
+    /// Calculation random position in a random area    
+    /// </summary>
+    public class Spawner : NetworkBehaviour
+    {
+        static public Spawner singleton { get; protected set; }
 
-    static public Spawner Instance {
-        get {
-            return _instance;
-        }
-    }
+        [Tooltip("The cooldown after the spawn in seconds")]
+        [SerializeField]
+        [Range(0, 10)]
+        protected float _delay;
+        [Tooltip("Box objects within which players spawn. The size of the box is defined by its scale")]
+        [SerializeField]
+        protected Transform[] _spawners;
 
-    private void Awake() {
-        if(_instance != null) {
-            Debug.LogError("Two singleton. The second one will be destroyed");
-            Destroy(gameObject);
-            return;
-        }
-        _instance = this;
-    }
+        protected bool[] _busy;
 
-    #endregion
-
-    [SerializeField] private Transform[] _spawners;
-    [SerializeField] private float _delay;
-
-    private bool[] _busy;
-
-    public override void OnStartServer() {
-        Debug.Log("Spawner:OnStartServer");
-        _busy = new bool[_spawners.Length];
-    }
-
-    public Vector3 CalculateSpawnPosition() {
-        int spawnIndex = RandomSpawnIndex();
-        Vector3 endPosition = RandomPositionBySquare(_spawners[spawnIndex].position, _spawners[spawnIndex].localScale);
-
-        // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;
-        Debug.Log($"Spawn position: {endPosition}, from object {_spawners[spawnIndex].name}");
-        if(_busy[spawnIndex] == true) {
-            Debug.LogError("Spawn position was calculated from object which is sleeping");
+        protected void Awake()
+        {
+            singleton = Singleton.Create<Spawner>(this, singleton);
         }
 
-        _busy[spawnIndex] = true;
-        StartCoroutine(WaitForDelay(spawnIndex));
+        /// <summary>
+        ///     Calculate the spawn position
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 CalculateSpawnPosition()
+        {
+            int spawnIndex = GetRandomSpawnIndex();
+            Vector3 endPosition = GetRandomPositionBySquare(_spawners[spawnIndex].position, _spawners[spawnIndex].localScale);
 
-        return endPosition;
-    }
-
-    private Vector3 RandomPositionBySquare(Vector3 pos, Vector3 scale) {
-        return new Vector3(RandomPointByLength(pos.x, scale.x / 2), pos.y, RandomPointByLength(pos.z, scale.z / 2));
-    }
-    
-    private float RandomPointByLength(float start, float length) {
-        return Random.Range(start - length, start + length);
-    }
-
-    private int RandomSpawnIndex() {
-        Dictionary<int, bool> tBusy = new Dictionary<int, bool>();
-        
-        for (int i = 0; i < _busy.Length; i++) {
-            tBusy.Add(i, _busy[i]);
-        }
-
-        int spawnIndex = Random.Range(0, tBusy.Count); 
-        int dictionaryIndex;
-
-        while(tBusy[spawnIndex]) {
-            tBusy.Remove(spawnIndex);
-
-            dictionaryIndex = Random.Range(0, tBusy.Count);
-            foreach(var busy in tBusy) {
-                spawnIndex = busy.Key;
-                --dictionaryIndex;
-                if(dictionaryIndex < 0) 
-                    break;
+            // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.black;
+            Debug.Log($"Spawn position: {endPosition}, from object {_spawners[spawnIndex].name}");
+            if (_busy[spawnIndex] == true)
+            {
+                Debug.LogError("Spawn position was calculated from object which has the cooldown");
             }
+
+            _busy[spawnIndex] = true;
+            StartCoroutine(WaitForDelay(spawnIndex));
+
+            return endPosition;
         }
 
-        return spawnIndex;
-    }
+        public override void OnStartServer()
+        {
+            Debug.Log("Spawner:OnStartServer");
+            _busy = new bool[_spawners.Length];
+        }
 
-    private IEnumerator WaitForDelay(int spawnIndex) {
-        yield return new WaitForSeconds(_delay);
+        protected Vector3 GetRandomPositionBySquare(Vector3 pos, Vector3 scale)
+        {
+            return new Vector3(GetRandomPointByLength(pos.x, scale.x / 2), pos.y, GetRandomPointByLength(pos.z, scale.z / 2));
+        }
 
-        _busy[spawnIndex] = false;
-        // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.white;
+        protected float GetRandomPointByLength(float start, float length)
+        {
+            return Random.Range(start - length, start + length);
+        }
+
+        protected int GetRandomSpawnIndex()
+        {
+            Dictionary<int, bool> tBusy = new Dictionary<int, bool>();
+
+            for (int i = 0; i < _busy.Length; i++)
+            {
+                tBusy[i] = _busy[i];
+            }
+
+            int spawnIndex = Random.Range(0, tBusy.Count);
+            int dictionaryIndex;
+
+            while (tBusy[spawnIndex])
+            {
+                tBusy.Remove(spawnIndex);
+
+                // NOTE: finds index of _busy (spawnIndex) lain in dictionaryIndex element of tBusy.
+                // SpawnIndex and dictionaryIndex are different because we remove an element from tBusy before it
+                dictionaryIndex = Random.Range(0, tBusy.Count);
+                foreach (var busy in tBusy)
+                {
+                    spawnIndex = busy.Key;
+                    --dictionaryIndex;
+                    if (dictionaryIndex < 0)
+                        break;
+                }
+            }
+
+            return spawnIndex;
+        }
+
+        protected IEnumerator WaitForDelay(int spawnIndex)
+        {
+            yield return new WaitForSeconds(_delay);
+
+            _busy[spawnIndex] = false;
+            // _spawners[spawnIndex].GetComponent<MeshRenderer>().material.color = Color.white;
+        }
     }
 }
