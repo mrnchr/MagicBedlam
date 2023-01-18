@@ -525,7 +525,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &3381753966244576597
 MonoBehaviour:
@@ -665,7 +665,7 @@ MonoBehaviour:
   clearVelocity: 0
   velocitySensitivity: 0.1
   syncAngularVelocity: 1
-  clearAngularVelocity: 1
+  clearAngularVelocity: 0
   angularVelocitySensitivity: 0.1
 --- !u!114 &4908205347895728065
 MonoBehaviour:
