@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Castle.unity
     guid: 6b7cfcbfecb24d1468cbcec4d5bf6e23
+  - enabled: 1
+    path: Assets/Scenes/RawScene.unity
+    guid: ed6474d172aabda4caac9325c8d8f065
   m_configObjects: {}
