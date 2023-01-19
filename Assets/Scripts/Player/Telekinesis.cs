@@ -172,15 +172,6 @@ namespace MagicBedlam
             ability = Ability.Ready;
         }
 
-        protected IEnumerator WaitForUpdateObject()
-        {
-            while(ability == Ability.Hold)
-            {
-                _movableObject.transform.localPosition = _tookObjectPosition;
-                yield return new WaitForSeconds(0.1f);
-            }
-        }
-
         [Server]
         protected IEnumerator Flight()
         {
@@ -193,11 +184,10 @@ namespace MagicBedlam
                 procent += 1 / _attractionTime * Time.deltaTime;
                 yield return null;
                 if (ability != Ability.Apply)
-                    break;
+                    yield break;
             }
 
             ability = Ability.Hold;
-            StartCoroutine(WaitForUpdateObject());
         }
 
         [Server]

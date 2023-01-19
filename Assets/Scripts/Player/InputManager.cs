@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 namespace MagicBedlam
 {
@@ -67,9 +66,8 @@ namespace MagicBedlam
         }
 
         protected void ResetInput() {
-            _mover?.CmdMove(Vector3.zero);
+            _mover?.Move(Vector3.zero);
             _mover?.Rotate(Vector3.zero);
-            _mover?.CmdRotate(Vector2.zero);
         }
 
         protected void Update()
@@ -86,9 +84,8 @@ namespace MagicBedlam
                 {
                     MoveInput();
 
-                    _mover?.CmdMove(_inputMovement);
+                    _mover?.Move(_inputMovement);
                     _mover?.Rotate(_inputMouse);
-                    _mover?.CmdRotate(_inputMouse);
 
                     if (Input.GetKeyDown(KeyCode.E))
                     {

@@ -47,11 +47,11 @@ namespace MagicBedlam
         [Tooltip("The lowest point of the player")]
         [SerializeField] 
         protected Transform _jumpChecker;
-        [SyncVar] public bool _canClimb;
-        [SyncVar] protected bool _canJump;
-        [SyncVar] public bool _canSwimJump;
-        [SyncVar] public bool _isSwim;
-        [SyncVar] protected float _jumpMultiplier;
+        public bool _canClimb;
+        protected bool _canJump;
+        public bool _canSwimJump;
+        public bool _isSwim;
+        protected float _jumpMultiplier;
 
         [Header("Mouse Controller")]
         [Tooltip("Mouse sensitivity on the X and Y axes")]
@@ -102,7 +102,40 @@ namespace MagicBedlam
         }
 
         public void Move(Vector3 direction)
-        {
+        {   
+            CmdMove(direction);
+            if(NetworkServer.active)
+                return;
+
+            // Vector3 dir;
+            // if (!_isSwim)
+            // {
+            //     dir = transform.TransformDirection(direction) * _speed;
+            //     dir.y = _rb.velocity.y;
+            //     _rb.velocity = dir;
+
+            //     if (direction.y != 0)
+            //     {
+            //         if (_canJump && Physics.CheckSphere(_jumpChecker.position, 0.1f, _jumpMask, QueryTriggerInteraction.Ignore))
+            //         {
+            //             _rb.AddForce(Vector3.up * _jumpForce * _jumpMultiplier, ForceMode.VelocityChange);
+            //         }
+            //         else if (_canClimb)
+            //         {
+            //             _rb.AddForce(Vector3.up * _swimSpeed, ForceMode.VelocityChange);
+            //             _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _swimSpeed);
+            //         }
+            //     }
+            // }
+            // else
+            // {
+            //     dir = transform.TransformDirection(direction) * _swimSpeed;
+            //     if (!_canSwimJump)
+            //         dir.y = 0;
+            //     _rb.AddForce(dir, ForceMode.VelocityChange);
+            //     _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _swimSpeed);
+            // }
+
             Vector3 dir;
             if (!_isSwim)
             {
@@ -114,7 +147,11 @@ namespace MagicBedlam
                 {
                     if (_canJump && Physics.CheckSphere(_jumpChecker.position, 0.1f, _jumpMask, QueryTriggerInteraction.Ignore))
                     {
+                        Vector3 vel = _rb.velocity;
+                        vel.y = 0;
+                        _rb.velocity = vel;
                         _rb.AddForce(Vector3.up * _jumpForce * _jumpMultiplier, ForceMode.VelocityChange);
+                        StartCoroutine(WaitForJump());
                     }
                     else if (_canClimb)
                     {
@@ -131,6 +168,20 @@ namespace MagicBedlam
                 _rb.AddForce(dir, ForceMode.VelocityChange);
                 _rb.velocity = Vector3.ClampMagnitude(_rb.velocity, _swimSpeed);
             }
+
+            _anim.SetBool("IsRun", _isSwim || _canClimb || dir.x * dir.x + dir.z * dir.z > 0.1f);
+        }
+
+        [Command]
+        public void CmdDebug() {
+            Debug.Log("Debug on the server");
+
+        }
+
+        [ClientRpc(includeOwner = false)]
+        public void RpcDebug() 
+        {
+            Debug.Log("Debug on the client");
         }
 
         public override void OnStartLocalPlayer()
@@ -160,15 +211,18 @@ namespace MagicBedlam
         // it calls to decrease input lag
         public void Rotate(Vector2 direction)
         {
-            transform.Rotate(0, direction.x * _mouseSensitivity.x, 0);
-            //_rb.angularVelocity = new Vector3(0, direction.x * _mouseSensitivity.x, 0);
+            CmdRotate(direction);
+            if(NetworkServer.active)
+                return;
+
+            // transform.Rotate(0, direction.x * _mouseSensitivity.x, 0);
+            _rb.angularVelocity = new Vector3(0, direction.x * _mouseSensitivity.x, 0);
 
             xRot -= direction.y * _mouseSensitivity.y;
             xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);
             FakeCamera.localRotation = Quaternion.Euler(xRot, 0, 0);
         } 
 
-        [Server]
         protected void ClimbAshore()
         {
             if (RaycastToCoast(_lowerCoastChecker))
@@ -207,7 +261,6 @@ namespace MagicBedlam
                         vel.y = 0;
                         _rb.velocity = vel;
                         _rb.AddForce(Vector3.up * _jumpForce * _jumpMultiplier, ForceMode.VelocityChange);
-                        StartCoroutine(WaitForFall());
                         StartCoroutine(WaitForJump());
                     }
                     else if (_canClimb)
@@ -232,15 +285,14 @@ namespace MagicBedlam
         [Command]
         public void CmdRotate(Vector2 direction)
         {
-            transform.Rotate(0, direction.x * _mouseSensitivity.x, 0);
-            //_rb.angularVelocity = new Vector3(0, direction.x * _mouseSensitivity.x, 0);
+            // transform.Rotate(0, direction.x * _mouseSensitivity.x, 0);
+            _rb.angularVelocity = new Vector3(0, direction.x * _mouseSensitivity.x, 0);
 
             xRot -= direction.y * _mouseSensitivity.y;
             xRot = Mathf.Clamp(xRot, _minViewY, _maxViewY);
             _fakeCamera.localRotation = Quaternion.Euler(xRot, 0, 0);
         }
 
-        [ServerCallback]
         protected void FixedUpdate()
         {
             if (_isSwim || _canClimb)
@@ -249,7 +301,6 @@ namespace MagicBedlam
             }
         }
 
-        [ServerCallback]
         protected void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Water"))
@@ -258,7 +309,6 @@ namespace MagicBedlam
             }
         }
 
-        [ServerCallback]
         protected void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("Water"))
@@ -267,26 +317,11 @@ namespace MagicBedlam
             }
         }
 
-        [Server]
         protected bool RaycastToCoast(Transform checker)
         {
             return Physics.Raycast(checker.position, checker.forward, 0.6f, _floorMask);
         }
 
-        [Server]
-        protected IEnumerator WaitForFall()
-        {
-            _anim.speed = 0;
-
-            while (!Physics.CheckSphere(_jumpChecker.position, 0.1f, _jumpMask, QueryTriggerInteraction.Ignore))
-            {
-                yield return null;
-            }
-
-            _anim.speed = 1;
-        }
-
-        [Server]
         protected IEnumerator WaitForJump()
         {
             _canJump = false;

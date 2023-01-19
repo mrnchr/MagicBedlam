@@ -57,6 +57,14 @@ namespace MagicBedlam
             InputManager.singleton.LockInput();
             GameMenu.singleton?.SetWinMenu(isOutOfTime);
 
+            PlayMusic();
+        }
+
+        protected void PlayMusic()
+        {
+            if(!_musicAudio)
+                return;
+
             _musicAudio.Stop();
             _musicAudio.loop = false;
             _musicAudio.playOnAwake = false;
