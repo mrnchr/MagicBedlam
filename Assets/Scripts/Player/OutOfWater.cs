@@ -14,7 +14,6 @@ namespace MagicBedlam
         [SerializeField] 
         protected Mover _mover;
 
-        [ServerCallback]
         protected void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Water"))
@@ -23,7 +22,6 @@ namespace MagicBedlam
             }
         }
 
-        [ServerCallback]
         protected void OnTriggerExit(Collider other)
         {
             if (other.CompareTag("Water"))

@@ -683,7 +683,7 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 0
   sendRate: 30
-  bufferTimeMultiplier: 2
+  bufferTimeMultiplier: 4
   bufferSizeLimit: 64
   catchupNegativeThreshold: -1
   catchupPositiveThreshold: 1

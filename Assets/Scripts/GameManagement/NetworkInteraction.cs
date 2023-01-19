@@ -12,6 +12,9 @@ namespace MagicBedlam
     {
         static public new NetworkInteraction singleton { get; protected set; }
 
+        [Scene]
+        public string gameScene;
+
         protected string _lastConnection;
 
         /// <summary>
@@ -84,7 +87,8 @@ namespace MagicBedlam
         public override void OnClientSceneChanged()
         {
             Debug.Log("NetworkInteraction:OnClientSceneChanged");
-            if (SceneManager.GetActiveScene().name == "Castle")
+            Debug.Log($"Active Scene: {SceneManager.GetActiveScene().name}, gameScene: {gameScene}");
+            if (IsSceneActive(gameScene))
             {
                 if (!NetworkClient.ready) NetworkClient.Ready();
                 if (NetworkClient.localPlayer == null)
@@ -124,8 +128,8 @@ namespace MagicBedlam
 
         public override void OnServerSceneChanged(string sceneName)
         {
-            if (SceneManager.GetActiveScene().name == "Castle")
-                maxConnections = numPlayers; // NOTE: not to connect new players 
+            if (IsSceneActive(gameScene))
+                maxConnections = NetworkServer.connections.Count; // NOTE: not to connect new players 
         }
 
         public override void ServerChangeScene(string newSceneName)

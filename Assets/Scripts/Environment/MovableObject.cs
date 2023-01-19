@@ -98,18 +98,6 @@ namespace MagicBedlam
                 owner = null;
             }
         }
-        
-        protected void Start()
-        {
-            // NetworkServer.Destroy(gameObject);
-            foreach(var child in GetComponentsInChildren<Transform>()) 
-            {
-                if(child.name == "Trigger") 
-                {
-                    Destroy(child.gameObject);
-                }
-            }
-        }
 
         protected void Reset()
         {

@@ -115,7 +115,7 @@ namespace MagicBedlam
         [Server]
         public void LaunchGame()
         {
-            NetworkInteraction.singleton.ServerChangeScene("Castle");
+            NetworkInteraction.singleton.ServerChangeScene(NetworkInteraction.singleton.gameScene);
         }
 
         protected void ChangeClientMenu()

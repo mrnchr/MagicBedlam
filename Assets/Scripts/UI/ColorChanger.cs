@@ -11,12 +11,9 @@ namespace MagicBedlam
     public class ColorChanger : MonoBehaviour
     {
         public static ColorChanger singleton { get; protected set; }
-        [Tooltip("Text field with time")]
-        [SerializeField] 
-        protected TMP_Text _timeText;
-        [Tooltip("The player cursor")]
-        [SerializeField] 
-        protected Image _cursor;
+        [Tooltip("Fields which changes color")]
+        [SerializeField]
+        protected Graphic[] _colorFields;
 
         protected void Awake()
         {
@@ -25,7 +22,10 @@ namespace MagicBedlam
 
         public void SetColor(Color menuColor)
         {
-            _timeText.color = _cursor.color = menuColor;
+            foreach(var field in _colorFields)
+            {
+                field.color = menuColor;
+            }
         }
     }
 }
